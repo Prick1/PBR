@@ -10,6 +10,7 @@
 #include "primitive.h"
 #include "sphere.h" 
 #include "triangle.h"
+#include "mesh.h"
 
 class Scene
 {
@@ -23,6 +24,7 @@ public:
                     IntersectionRecord &intersection_record ) const;
 
     void load( void );
+    void load_mesh(const Mesh& mesh1,const glm::vec3 position);
 
     std::vector< Primitive::PrimitiveUniquePtr > primitives_;
 
