@@ -41,13 +41,13 @@ void Scene::load_mesh(const Mesh& mesh1,const glm::vec3 position){
 
 void Scene::load( void ) 
 {
-    Mesh mesh1("lowpolytree.obj");
+    Mesh mesh1("monkey.obj");
     load_mesh(mesh1, glm::vec3 {0.0f, 0.0f, -2.0f});
     /*primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  -1.0f, 0.0f, -1.0f }, 0.4f } ) );
     primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.0f, 0.0f, -2.0f }, 0.4f } ) );
     primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.0f,-1.0f, -3.0f }, 0.4f } ) );
     primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.0f, 1.0f, -4.0f }, 0.4f } ) );
-    //primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.0f,-0.5f, -3.0f }, 0.2f } ) );
+    primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.0f,-0.5f, -3.0f }, 0.2f } ) );
     primitives_.push_back(Primitive::PrimitiveUniquePtr( new Triangle{ glm::vec3{1.0f, 1.0f, -5.0f},
 glm::vec3{0.7f, 1.0f, -3.0f}, glm::vec3{0.85f, 0.85f, -1.0f}} ) ); 
     primitives_.push_back(Primitive::PrimitiveUniquePtr( new Triangle{ glm::vec3{0.9f, 0.9f, -5.1f},
