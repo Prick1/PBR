@@ -12,7 +12,11 @@ public:
 
     typedef std::unique_ptr< Primitive > PrimitiveUniquePtr;
 
-    Primitive( void );
+    glm::vec3 color;
+
+     Primitive( void ){}
+
+    Primitive(glm::vec3 colorIn);
 
     virtual ~Primitive( void );
 
