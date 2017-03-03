@@ -17,7 +17,8 @@ public:
                         const glm::ivec2 &resolution,
                         const glm::vec3 &position,
                         const glm::vec3 &up_vector,
-                        const glm::vec3 &look_at );
+                        const glm::vec3 &look_at ,
+                        const float distanceIn = 2.0f);
 
     Ray getWorldSpaceRay( const glm::vec2 &pixel_coord ) const;
 
@@ -28,6 +29,8 @@ public:
     float min_y_;
 
     float max_y_;
+
+    float distance_from_focus;
 
 };
 
