@@ -4,10 +4,12 @@
 #include <sstream>
 #include <iomanip>
 #include <cmath>
+#include <cstdlib>
 
 #include "camera.h"
 #include "scene.h"
 #include "buffer.h"
+#define RAYS 10
 
 class RayTracer
 {

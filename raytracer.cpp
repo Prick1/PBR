@@ -1,5 +1,6 @@
 #include "raytracer.h"
 
+
 RayTracer::RayTracer( Camera &camera,
                       const Scene &scene,
                       const glm::vec3 background_color,
@@ -31,13 +32,20 @@ void RayTracer::integrate( void )
         // Loops over image columns
         for ( std::size_t x = 0; x < buffer_.h_resolution_; x++ )
         {
-           intersection_record.t_ = std::numeric_limits< double >::max();
+            intersection_record.intersectionColor = glm::vec3(0.0f, 0.0f, 0.0f);
+            glm::vec3 color(0.0f,0.0f,0.0f);
+            for(unsigned int i = 0; i < RAYS; i++){
+                intersection_record.t_ = std::numeric_limits< double >::max();
 
-            Ray ray{ camera_.getWorldSpaceRay( glm::vec2{ x + 0.5f, y + 0.5f } ) };
+                Ray ray{ camera_.getWorldSpaceRay( glm::vec2{ x + rand()/(float)RAND_MAX, y + rand()/(float)RAND_MAX } ) };
 
-            if ( scene_.intersect( ray, intersection_record ) )
-                //buffer_.buffer_data_[x][y] = glm::vec3{ 1.0f, 0.0f, 0.0f };
-                buffer_.buffer_data_[x][y] = glm::vec3{ intersection_record.intersectionColor};
+                if ( scene_.intersect( ray, intersection_record ) )
+                    //buffer_.buffer_data_[x][y] = glm::vec3{ 1.0f, 0.0f, 0.0f };
+                    //buffer_.buffer_data_[x][y] = glm::vec3{ intersection_record.intersectionColor};
+                    color += intersection_record.intersectionColor;
+            }
+            color /= RAYS;
+            buffer_.buffer_data_[x][y] = glm::vec3{ color};
         }
     }
 

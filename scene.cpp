@@ -41,8 +41,8 @@ void Scene::load_mesh(const Mesh& mesh1,const glm::vec3 position){
 
 void Scene::load( void ) 
 {
-    Mesh mesh1("LEGO_Man.obj");
-    load_mesh(mesh1, glm::vec3 {0.0f, 0.0f, -4.0f});
+    Mesh mesh1("monkey.obj");
+    load_mesh(mesh1, glm::vec3 {0.0f, 0.0f, -2.0f});
     /*primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  -1.0f, 0.0f, -1.0f }, 0.4f } ) );
     primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.0f, 0.0f, -2.0f }, 0.4f } ) );
     primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.0f,-1.0f, -3.0f }, 0.4f } ) );
