@@ -13,7 +13,7 @@ public:
     Triangle( void );
 
     Triangle( const glm::vec3 &point1, const glm::vec3 &point2, const glm::vec3 &point3,  
-    glm::vec3 colorIn = glm::vec3(rand()%256/255.0f, rand()%256/255.0f, rand()%256/255.0f));
+    Material BRDF1 = Material(glm::vec3(0.0f), glm::vec3(rand()%256/255.0f, rand()%256/255.0f, rand()%256/255.0f)));
 
     bool intersect( const Ray &ray,
                     IntersectionRecord &intersection_record ) const;

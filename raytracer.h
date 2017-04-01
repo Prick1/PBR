@@ -5,11 +5,12 @@
 #include <iomanip>
 #include <cmath>
 #include <cstdlib>
+#include <random>
 
 #include "camera.h"
 #include "scene.h"
 #include "buffer.h"
-#define RAYS 10
+#define RAYS 1000
 
 class RayTracer
 {
@@ -23,6 +24,12 @@ public:
     void integrate( void );
 
 private:
+    std::uniform_real_distribution<float> dist_x;
+    std::uniform_real_distribution<float> dist_y;
+    std::uniform_real_distribution<float> dist_theta;
+    std::uniform_real_distribution<float> dist_phi;
+    std::mt19937 generator;
+
 
     const Camera &camera_;
 
@@ -31,6 +38,7 @@ private:
     glm::dvec3 background_color_;
 
     Buffer &buffer_;
+    glm::vec3 L(const Ray& r, int depth);
 
 };
 

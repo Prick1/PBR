@@ -2,6 +2,7 @@
 #define PRIMITIVE_H_
 
 #include <memory>
+#include "material.h"
 
 #include "ray.h"
 #include "intersection_record.h"
@@ -12,11 +13,11 @@ public:
 
     typedef std::unique_ptr< Primitive > PrimitiveUniquePtr;
 
-    glm::vec3 color;
+    Material BRDF;
 
-     Primitive( void ){}
+    Primitive( void ){}
 
-    Primitive(glm::vec3 colorIn);
+    Primitive(Material BRDF1);
 
     virtual ~Primitive( void );
 
