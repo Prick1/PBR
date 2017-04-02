@@ -1,0 +1,13 @@
+*.o
+*.ppm
+*.d
+*.mtl
+*.jpg
+*.txt
+*.blend
+blog/*
+images/*
+images_ppm/*
+objects/*.blend
+objects/*.mtl
+swpathtracer

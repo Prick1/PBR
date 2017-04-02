@@ -12,8 +12,8 @@ RayTracer::RayTracer( Camera &camera,
 {
     std::uniform_real_distribution<float> dist_x(0.0f, 1.0f);
     std::uniform_real_distribution<float> dist_y(0.0f, 1.0f);
-    std::uniform_real_distribution<float> dist_phi(0.0f, (float) 2.0f * M_PI); 
-    std::uniform_real_distribution<float> dist_theta(0.0f, 1.0f);
+    std::uniform_real_distribution<float> dist_theta(0.0f, (float) 2.0f * M_PI); 
+    std::uniform_real_distribution<float> dist_phi(0.0f, 1.0f);
 }
 
 void RayTracer::integrate( void )
@@ -65,10 +65,10 @@ glm::vec3 RayTracer::L(const Ray& r, int depth){
         if(scene_.intersect(r, intersection_record)){
             float theta, phi;
             ONB onb;
-            phi = dist_phi(generator);
-            theta = glm::acos(1 - dist_theta(generator));
+            theta = dist_theta(generator);
+            phi = glm::acos(1 - dist_phi(generator));
 
-            glm::vec3 newRayDirection( -cosf(phi)*sinf(theta), sinf(phi), -cosf(phi)*cosf(theta));
+            glm::vec3 newRayDirection( sin(phi)*cos(theta), sin(phi) * sin(theta), cos(phi));
 	        
             //float cosTheta = ;
             onb.setFromV(intersection_record.normal_);
