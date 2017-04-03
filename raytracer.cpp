@@ -63,10 +63,12 @@ glm::vec3 RayTracer::L(const Ray& r, int depth){
 
     if(depth < 5){
         if(scene_.intersect(r, intersection_record)){
-            float theta, phi;
+            float theta, phi, r1, r2;
             ONB onb;
-            theta = dist_theta(generator);
-            phi = glm::acos(1 - dist_phi(generator));
+	    r1 = rand() / (float)RAND_MAX;
+	    r2 = rand() / (float)RAND_MAX;
+            theta = 2.0f * (float)M_PI * r1;
+            phi = glm::acos(1 - r2);
 
             glm::vec3 newRayDirection( sin(phi)*cos(theta), sin(phi) * sin(theta), cos(phi));
 	        
