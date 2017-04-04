@@ -24,7 +24,7 @@ public:
                     IntersectionRecord &intersection_record ) const;
 
     void load( void );
-    void load_mesh(const Mesh& mesh1,const glm::vec3 position);
+    void load_mesh(Mesh& mesh1,const glm::vec3 position);
 
     std::vector< Primitive::PrimitiveUniquePtr > primitives_;
 

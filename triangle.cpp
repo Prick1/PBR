@@ -3,8 +3,8 @@
 Triangle::Triangle(void){}
 
 Triangle::Triangle( const glm::vec3 &point1, const glm::vec3 &point2, const glm::vec3 &point3,
-	Material BRDF1):
-	Primitive(BRDF1), 
+	Material* material):
+	Primitive(material), 
 	point1_(point1), 
 	point2_(point2), 
 	point3_(point3)
@@ -43,6 +43,6 @@ bool Triangle::intersect( const Ray &ray,
 	float testnormaldirection = glm::dot(ray.direction_, intersection_record.normal_);
 	if(testnormaldirection > 0.0f)
 	       intersection_record.normal_ = -intersection_record.normal_;
-	intersection_record.intersectionMaterial = BRDF;
+	intersection_record.intersectionMaterial = material_;
 	return true;	
 }

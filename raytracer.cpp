@@ -12,8 +12,8 @@ RayTracer::RayTracer( Camera &camera,
 {
     std::uniform_real_distribution<float> dist_x(0.0f, 1.0f);
     std::uniform_real_distribution<float> dist_y(0.0f, 1.0f);
-    std::uniform_real_distribution<float> dist_theta(0.0f, (float) 2.0f * M_PI); 
-    std::uniform_real_distribution<float> dist_phi(0.0f, 1.0f);
+    //std::uniform_real_distribution<float> dist_theta(0.0f, 2.0f * float(M_PI)); 
+    //std::uniform_real_distribution<float> dist_phi(0.0f, 1.0f);
 }
 
 void RayTracer::integrate( void )
@@ -46,9 +46,10 @@ void RayTracer::integrate( void )
                 //if ( scene_.intersect( ray, intersection_record ) )
                     //buffer_.buffer_data_[x][y] = glm::vec3{ 1.0f, 0.0f, 0.0f };
                     //buffer_.buffer_data_[x][y] = glm::vec3{ intersection_record.intersectionColor};
-                     buffer_.buffer_data_[x][y] += L(ray, 0);
+                     buffer_.buffer_data_[x][y] += L(ray,0);
             }
             buffer_.buffer_data_[x][y] /= RAYS;
+	    glm::clamp(buffer_.buffer_data_[x][y], glm::vec3{0.0f, 0.0f, 0.0f}, glm::vec3{1.0f, 1.0f, 1.0f});
         }
     }
 
@@ -63,25 +64,20 @@ glm::vec3 RayTracer::L(const Ray& r, int depth){
 
     if(depth < 5){
         if(scene_.intersect(r, intersection_record)){
-            float theta, phi, r1, r2;
-            ONB onb;
-	    r1 = rand() / (float)RAND_MAX;
-	    r2 = rand() / (float)RAND_MAX;
-            theta = 2.0f * (float)M_PI * r1;
-            phi = glm::acos(1 - r2);
+            //phi = acos(1 - dist_phi(generator));
+            //theta = dist_theta(generator);
+            
+	    /*if(costheta < 0.0f){
+		costheta = -costheta;
+		newRayDirection = - newRayDirection;
+		}*/
 
-            glm::vec3 newRayDirection( sin(phi)*cos(theta), sin(phi) * sin(theta), cos(phi));
-	        
-            //float cosTheta = ;
-            onb.setFromV(intersection_record.normal_);
-           
-	    newRayDirection = glm::normalize(onb.getBasisMatrix() * newRayDirection);
+            Ray reflect = intersection_record.intersectionMaterial->getRefflectedRay(intersection_record.normal_, intersection_record.position_);
+	    float costheta = glm::dot (intersection_record.normal_, reflect.direction_);
 
-            Ray reflect(intersection_record.position_ + (intersection_record.normal_ * 0.001f), newRayDirection);
-
-            Lo = intersection_record.intersectionMaterial.emittance_ +
-                 (float)(2.0f * M_PI) * intersection_record.intersectionMaterial.reflectance_
-                 * L(reflect, ++depth) * glm::dot (intersection_record.normal_, newRayDirection);
+            Lo = intersection_record.intersectionMaterial->emittance_ +
+                 2.0f * float(M_PI) * intersection_record.intersectionMaterial->getBRDF()
+                 * L(reflect, ++depth) * costheta;
 
         }
     }

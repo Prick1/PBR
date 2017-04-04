@@ -1,6 +1,7 @@
 #ifndef MESH_H_
 #define MESH_H_
 
+#include "primitive.h"
 #include "triangle.h"
 #include <vector>
 #include <string>
@@ -14,7 +15,9 @@ public:
     Mesh(const std::string &pFile);
     
     bool created = false;
-    std::vector< Triangle > triangles;
+    std::vector<Triangle*> triangles;
+    std::vector<Material*> materials;
+    void Translate(glm::vec3 position);
 };
 
 #endif /* MESH_H_ */

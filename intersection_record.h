@@ -3,15 +3,15 @@
 
 #include <glm/glm.hpp>
 #include "material.h"
-#include "onb.h"
 
-struct IntersectionRecord
+class IntersectionRecord
 {
+public:
     float t_;
     glm::vec3 position_;
     glm::vec3 normal_;
     //ONB onb_;
-    Material intersectionMaterial = Material(glm::vec3(0.0f), glm::vec3(0.0f));
+    Material *intersectionMaterial;
 };
 
 #endif /* INTERSECTION_RECORD_H_ */

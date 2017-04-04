@@ -2,7 +2,7 @@
 #define PRIMITIVE_H_
 
 #include <memory>
-#include "material.h"
+#include "diffuse.h"
 
 #include "ray.h"
 #include "intersection_record.h"
@@ -13,11 +13,11 @@ public:
 
     typedef std::unique_ptr< Primitive > PrimitiveUniquePtr;
 
-    Material BRDF;
+    Material* material_;
 
     Primitive( void ){}
 
-    Primitive(Material BRDF1);
+    Primitive(Material* material);
 
     virtual ~Primitive( void );
 

@@ -14,7 +14,7 @@ public:
     Sphere( void );
 
     Sphere( const glm::vec3 &center,
-            float radius , Material BRDF1 = Material(glm::vec3(10.0f),glm::vec3(rand()%256/255.0f, rand()%256/255.0f, rand()%256/255.0f)));
+            float radius , Material* material);
 
     bool intersect( const Ray &ray,
                     IntersectionRecord &intersection_record ) const;
