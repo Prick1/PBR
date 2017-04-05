@@ -1,7 +1,7 @@
 #include "diffuse.h"
 
 Diffuse::Diffuse(glm::vec3 emittance, glm::vec3 reflectance): reflectance_(reflectance){
-	emittance_ = emittance / float(M_PI);
+	emittance_ = emittance;
 }
 
 
