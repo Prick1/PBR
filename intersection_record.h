@@ -10,7 +10,6 @@ public:
     float t_;
     glm::vec3 position_;
     glm::vec3 normal_;
-    //ONB onb_;
     Material *intersectionMaterial;
 };
 
