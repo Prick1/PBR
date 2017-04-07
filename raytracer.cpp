@@ -9,51 +9,74 @@ RayTracer::RayTracer( Camera &camera,
         scene_( scene ),
         background_color_{ background_color },
         buffer_( buffer )
+{}
+
+void RayTracer::integrate(const int numberThreads)
 {
-    std::uniform_real_distribution<float> dist_x(0.0f, 1.0f);
-    std::uniform_real_distribution<float> dist_y(0.0f, 1.0f);
-    //std::uniform_real_distribution<float> dist_theta(0.0f, 2.0f * float(M_PI)); 
-    //std::uniform_real_distribution<float> dist_phi(0.0f, 1.0f);
-}
+    progress = new int[numberThreads];  
 
-void RayTracer::integrate( void )
-{
-    //IntersectionRecord intersection_record;
+    numBlocksH = buffer_.h_resolution_/blockSizeH;
+    numBlocksV = buffer_.h_resolution_/blockSizeV; 
+    numBlocks = numBlocksH * numBlocksV;
 
-    // Image space origin (i.e. x = 0 and y = 0) at the top left corner.
-
-    // Loops over image rows
-    
-    for ( std::size_t y = 0; y < buffer_.v_resolution_; y++ )
-    {
-        std::stringstream progress_stream;
-        progress_stream << "\r  progress .........................: "
-                        << std::fixed << std::setw( 6 )
-                        << std::setprecision( 2 )
-                        << 100.0 * y / ( buffer_.v_resolution_ - 1 )
-                        << "%";
-
-        std::clog << progress_stream.str();
-
-        // Loops over image columns
-        for ( std::size_t x = 0; x < buffer_.h_resolution_; x++ )
-        {
-            for(unsigned int i = 0; i < RAYS; i++){
-                //intersection_record.t_ = std::numeric_limits< double >::max();
-
-                Ray ray{ camera_.getWorldSpaceRay( glm::vec2{ x + dist_x(generator), y + dist_y(generator) } ) };
-
-                //if ( scene_.intersect( ray, intersection_record ) )
-                    //buffer_.buffer_data_[x][y] = glm::vec3{ 1.0f, 0.0f, 0.0f };
-                    //buffer_.buffer_data_[x][y] = glm::vec3{ intersection_record.intersectionColor};
-                     buffer_.buffer_data_[x][y] += L(ray,0);
-            }
-            buffer_.buffer_data_[x][y] /= RAYS;
-	    glm::clamp(buffer_.buffer_data_[x][y], glm::vec3{0.0f, 0.0f, 0.0f}, glm::vec3{1.0f, 1.0f, 1.0f});
-        }
+    for(unsigned int i = 0; i < (unsigned int)numberThreads; i++){
+        progress[i] = 0;
+        threads.push_back(new std::thread(&RayTracer::thread_integrate, this, i));
     }
 
-    std::clog << std::endl;
+    print_progress();
+
+    for(unsigned int i = 0; i < (unsigned int)numberThreads; i++){
+        threads[i]->join();
+        delete threads[i];
+    }
+
+    threads.clear();
+}
+
+void RayTracer::thread_integrate(const int threadId){
+    std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+    //std::uniform_real_distribution<float> dist_y(0.0f, 1.0f);
+    std::mt19937 generator;
+    
+    std::size_t initX, initY, maxX, maxY, workingBlock;
+
+    while(1){
+        workingBlock = atomicBlock++;
+        if(workingBlock >= numBlocks)
+            break;
+        
+        initX = (workingBlock % numBlocksH) * blockSizeH;
+        initY = (workingBlock / numBlocksH) * blockSizeV;
+
+        maxX = initX + blockSizeH; 
+        maxY = initY + blockSizeV;
+
+        if(maxX > (std::size_t)buffer_.h_resolution_) 
+            maxX = (std::size_t)buffer_.h_resolution_;
+        if(maxY > (std::size_t)buffer_.v_resolution_)
+            maxY = (std::size_t)buffer_.v_resolution_;
+
+        for ( std::size_t y = initY; y < maxY; y++ ) {
+
+            for ( std::size_t x = initX; x < maxX; x++ ){
+            
+                for(unsigned int i = 0; i < RAYS; i++){
+
+                    Ray ray{ camera_.getWorldSpaceRay( glm::vec2{ x + dist(generator), y + dist(generator) } ) };
+
+                    buffer_.buffer_data_[x][y] += L(ray,1);
+                }
+
+            buffer_.buffer_data_[x][y] /= RAYS;
+	        //glm::clamp(buffer_.buffer_data_[x][y], glm::vec3{0.0f, 0.0f, 0.0f}, glm::vec3{1.0f, 1.0f, 1.0f});
+            progress[threadId]++;
+            }  
+        }
+
+
+    }
+
 }
 
 glm::vec3 RayTracer::L(const Ray& r, int depth){
@@ -64,16 +87,24 @@ glm::vec3 RayTracer::L(const Ray& r, int depth){
 
     if(depth < 5){
         if(scene_.intersect(r, intersection_record)){
-            //phi = acos(1 - dist_phi(generator));
-            //theta = dist_theta(generator);
-            
-	    /*if(costheta < 0.0f){
-		costheta = -costheta;
-		newRayDirection = - newRayDirection;
-		}*/
+            /*float theta, phi, r1, r2;
+             ONB onb;
+            r1 = rand() / (float)RAND_MAX;
+            r2 = rand() / (float)RAND_MAX;
+  
+    
+            phi = acos(1 - r1);
+            theta = 2.0f * float(M_PI) * r2;
+
+            glm::vec3 newRayDirection( sin(phi)*cos(theta), cos(phi), sin(phi) * sin(theta));
+	    
+            onb.setFromV(intersection_record.normal_);
+            newRayDirection = glm::normalize(onb.getBasisMatrix() * newRayDirection);
+
+            Ray reflect(intersection_record.position_ + (intersection_record.normal_ * 0.001f), newRayDirection);*/
 
             Ray reflect = intersection_record.intersectionMaterial->getRefflectedRay(intersection_record.normal_, intersection_record.position_);
-	    float costheta = glm::dot (intersection_record.normal_, reflect.direction_);
+	        float costheta = glm::dot (intersection_record.normal_, reflect.direction_);
 
             Lo = intersection_record.intersectionMaterial->emittance_ +
                  2.0f * float(M_PI) * intersection_record.intersectionMaterial->getBRDF()
@@ -84,3 +115,55 @@ glm::vec3 RayTracer::L(const Ray& r, int depth){
     return Lo;
 }
 
+void RayTracer::print_progress(void){
+    int workingBlock;
+	int completedBlocks;
+    
+    unsigned long remainingTime = 0;
+	unsigned long prevTotalTime = 0;
+    std::time_t initialTime = time(NULL);
+	
+	int totalProgress;
+    int numPixels = buffer_.h_resolution_ * buffer_.v_resolution_;
+
+    while(1){
+        workingBlock = atomicBlock;
+
+        completedBlocks = workingBlock - threads.size();
+        if (completedBlocks < 0)
+            completedBlocks = 0;
+        
+        totalProgress = 0;
+        for(unsigned int i = 0; i < threads.size(); i++)
+            totalProgress += progress[i];
+
+        std::stringstream progress_stream;
+        progress_stream << "\r  progress .........................: "
+                        << std::fixed << std::setw( 6 )
+                        << std::setprecision( 2 )
+                        << 100.0 * (float)totalProgress/numPixels 
+                        << "% | " <<
+                        completedBlocks << "/" << numBlocks;
+
+        if(totalProgress){
+            prevTotalTime = numPixels * difftime(time(NULL), initialTime) / totalProgress;
+            remainingTime = prevTotalTime - difftime(time(NULL), initialTime);
+
+            progress_stream << " | " << remainingTime/3600 << " h " 
+			 				       << (remainingTime/60)%60 << " min "
+                                   << remainingTime%60 << " s ";
+
+
+        }
+
+        std::clog << progress_stream.str();
+
+        if((unsigned int)workingBlock >= numBlocks + threads.size())
+            break;
+        
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    }
+
+    std::clog << std::endl; 
+}

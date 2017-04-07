@@ -1,6 +1,6 @@
 #include "diffuse.h"
 
-Diffuse::Diffuse(glm::vec3 emittance, glm::vec3 reflectance): reflectance_(reflectance){
+Diffuse::Diffuse(glm::vec3 emittance, glm::vec3 reflectance): reflectance_(reflectance/(float)M_PI){
 	emittance_ = emittance;
 }
 
@@ -26,5 +26,5 @@ Ray Diffuse::getRefflectedRay(glm::vec3 normal, glm::vec3 position){
 }
 
 glm::vec3 Diffuse::getBRDF(){
-	return reflectance_/(float)M_PI;
+	return reflectance_;
 }

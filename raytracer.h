@@ -6,11 +6,16 @@
 #include <cmath>
 #include <cstdlib>
 #include <random>
+#include <atomic>
+#include <chrono>
+#include <thread>
+#include <vector>
+#include <algorithm>
 
 #include "camera.h"
 #include "scene.h"
 #include "buffer.h"
-#define RAYS 30
+#define RAYS 2000
 
 class RayTracer
 {
@@ -21,15 +26,11 @@ public:
                const glm::vec3 background_color,
                Buffer &buffer );
 
-    void integrate( void );
+    void integrate(const int numberThreads = 4);
 
 private:
-    std::uniform_real_distribution<float> dist_x;
-    std::uniform_real_distribution<float> dist_y;
-    std::uniform_real_distribution<float> dist_theta;
-    std::uniform_real_distribution<float> dist_phi;
-    std::mt19937 generator;
 
+    std::vector<std::thread*> threads; 
 
     const Camera &camera_;
 
@@ -38,7 +39,23 @@ private:
     glm::dvec3 background_color_;
 
     Buffer &buffer_;
+
+    std::atomic<std::size_t> atomicBlock{0};
+
+
+    std::size_t numBlocksV;
+    std::size_t numBlocksH;
+    std::size_t numBlocks;
+
+    const std::size_t blockSizeV = 32;
+    const std::size_t blockSizeH = 32;
+
+    int *progress;
+
     glm::vec3 L(const Ray& r, int depth);
+
+    void thread_integrate(const int threadId);
+    void print_progress(void);
 
 };
 

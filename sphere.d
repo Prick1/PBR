@@ -1,2 +1,2 @@
-sphere.o: sphere.cpp sphere.h primitive.h material.h ray.h \
- intersection_record.h onb.h
+sphere.o: sphere.cpp sphere.h primitive.h diffuse.h material.h ray.h \
+ onb.h intersection_record.h
