@@ -87,29 +87,32 @@ glm::vec3 RayTracer::L(const Ray& r, int depth){
 
     if(depth < 5){
         if(scene_.intersect(r, intersection_record)){
-            /*float theta, phi, r1, r2;
-             ONB onb;
-            r1 = rand() / (float)RAND_MAX;
-            r2 = rand() / (float)RAND_MAX;
-  
-    
-            phi = acos(1 - r1);
-            theta = 2.0f * float(M_PI) * r2;
 
-            glm::vec3 newRayDirection( sin(phi)*cos(theta), cos(phi), sin(phi) * sin(theta));
-	    
-            onb.setFromV(intersection_record.normal_);
-            newRayDirection = glm::normalize(onb.getBasisMatrix() * newRayDirection);
+            Ray reflect = intersection_record.intersectionMaterial->getReflectedRay(r, intersection_record.normal_, intersection_record.position_);
+            
+            switch(intersection_record.intersectionMaterial->materialEnum){
 
-            Ray reflect(intersection_record.position_ + (intersection_record.normal_ * 0.001f), newRayDirection);*/
+                case isDiffuse:{
 
-            Ray reflect = intersection_record.intersectionMaterial->getRefflectedRay(intersection_record.normal_, intersection_record.position_);
-	        float costheta = glm::dot (intersection_record.normal_, reflect.direction_);
+                float costheta(glm::dot (intersection_record.normal_, reflect.direction_));
 
-            Lo = intersection_record.intersectionMaterial->emittance_ +
-                 2.0f * float(M_PI) * intersection_record.intersectionMaterial->getBRDF()
-                 * L(reflect, ++depth) * costheta;
+                Lo = intersection_record.intersectionMaterial->emittance_ +
+                    2.0f * float(M_PI) * intersection_record.intersectionMaterial->getBSDF()
+                    * L(reflect, ++depth) * costheta;
 
+                break;
+                }
+
+                case isSpecular:
+
+                Lo = intersection_record.intersectionMaterial->emittance_ +
+                    2.0f * intersection_record.intersectionMaterial->getBSDF()
+                    * L(reflect, ++depth);
+
+                break;
+
+            }
+            
         }
     }
     return Lo;

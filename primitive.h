@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "diffuse.h"
+#include "specular.h"
 
 #include "ray.h"
 #include "intersection_record.h"

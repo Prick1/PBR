@@ -8,12 +8,13 @@
 
 class Triangle : public Primitive
 {
+    bool flipNormal_;
 public:
 
     Triangle( void );
 
     Triangle( const glm::vec3 &point1, const glm::vec3 &point2, const glm::vec3 &point3,  
-    Material* material);
+    Material* material, bool flipNormal = false);
 
     bool intersect( const Ray &ray,
                     IntersectionRecord &intersection_record ) const;

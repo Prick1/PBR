@@ -3,8 +3,9 @@
 Triangle::Triangle(void){}
 
 Triangle::Triangle( const glm::vec3 &point1, const glm::vec3 &point2, const glm::vec3 &point3,
-	Material* material):
-	Primitive(material), 
+	Material* material, bool flipNormal):
+	Primitive(material),
+	flipNormal_(flipNormal), 
 	point1_(point1), 
 	point2_(point2), 
 	point3_(point3)
@@ -40,8 +41,8 @@ bool Triangle::intersect( const Ray &ray,
 	intersection_record.position_ = ray.origin_ + intersection_record.t_ * ray.direction_;
 	//glm::vec3 center_ = glm::vec3((point1_.x+point2_.x+point3_.x)/3.0f, (point1_.y+point2_.y+point3_.y)/3.0f, (point1_.z+point2_.z+point3_.z)/3.0f);
 	intersection_record.normal_ = glm::normalize(glm::cross(point2_ - point1_, point3_ - point1_));
-	float testnormaldirection = glm::dot(ray.direction_, intersection_record.normal_);
-	if(testnormaldirection > 0.0f)
+	//float testnormaldirection = glm::dot(ray.direction_, intersection_record.normal_);
+	if(flipNormal_)
 	       intersection_record.normal_ = -intersection_record.normal_;
 	intersection_record.intersectionMaterial = material_;
 	return true;	

@@ -25,16 +25,14 @@ bool Scene::intersect( const Ray &ray,
     return intersection_result;
 }
 void Scene::load_mesh(Mesh& mesh1,const glm::vec3 position){
+    
     if(mesh1.created){
-    mesh1.Translate(position);
-    for(unsigned int i = 0; i < mesh1.triangles.size(); i++ ){
-	primitives_.push_back(Primitive::PrimitiveUniquePtr(mesh1.triangles[i]));
-        /*primitives_.push_back(Primitive::PrimitiveUniquePtr(new Triangle{ position + mesh1.triangles[i].point1_,
-                                                                          position + mesh1.triangles[i].point2_,
-                                                                          position + mesh1.triangles[i].point3_, 
-							    new Diffuse(glm::vec3(20.0f), glm::vec3(1.0f))}));*/
-	}
+        mesh1.Translate(position);
+        for(unsigned int i = 0; i < mesh1.triangles.size(); i++ ){
+	        primitives_.push_back(Primitive::PrimitiveUniquePtr(mesh1.triangles[i]));
+	    }
     }
+
     else{
         primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.0f, 0.0f, -2.0f }, 0.4f , new Diffuse(glm::vec3(20.0f), glm::vec3(1.0f))}));
     }
@@ -50,7 +48,7 @@ void Scene::load( void )
     Mesh mesh1("CornellBox.obj");
     load_mesh(mesh1, glm::vec3 {0.0f});
     
-    //primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.0f, 1.0f, -1.0f }, 0.4f, new Diffuse{glm::vec3(20.0f), glm::vec3(1.0f) }}));
+    primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.0f, 1.0f, 0.0f }, 0.4f, new Specular() }));
 /*
     primitives_.push_back(Primitive::PrimitiveUniquePtr(new Triangle( glm::vec3(-1.0f,-1.0f, 0.0f),  //DOWN
                                                                       glm::vec3(1.0f, -1.0f, 0.0f),

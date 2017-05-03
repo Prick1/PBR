@@ -4,10 +4,11 @@
 #include "material.h"
 
 class Diffuse: public Material{
-public:
+    float costheta = 1.0f;
     glm::vec3 reflectance_;
-    inline Ray getRefflectedRay(glm::vec3 normal, glm::vec3 point);
-    inline glm::vec3 getBRDF();
+public:
+    inline Ray getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3 position);
+    inline glm::vec3 getBSDF();
     Diffuse(glm::vec3 emittance, glm::vec3 reflectance);
     Diffuse(void);
     
