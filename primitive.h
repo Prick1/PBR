@@ -2,8 +2,10 @@
 #define PRIMITIVE_H_
 
 #include <memory>
+#include "lightsource.h"
 #include "diffuse.h"
 #include "specular.h"
+#include "dielectric.h"
 
 #include "ray.h"
 #include "intersection_record.h"

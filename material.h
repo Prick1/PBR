@@ -8,11 +8,14 @@
 #include "onb.h"
 typedef enum tMaterial{
     isDiffuse,
-    isSpecular}tMaterial;
+    isSpecular,
+    isLightSource,
+    isDielectric
+}tMaterial;
 class Material{
 public:
     tMaterial materialEnum;
-    glm::vec3 emittance_;
+    //glm::vec3 emittance_;
     virtual Ray getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3 position) = 0;
     virtual glm::vec3 getBSDF() = 0;
 };

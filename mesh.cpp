@@ -8,17 +8,27 @@ Mesh::Mesh(const std::string &pFile){
                                              aiProcess_SortByPType);
     if (scene){
 		for (unsigned int c = 0; c < scene->mNumMaterials; c++){
-			aiColor3D diffuseColor = {0.5,0.5,0.5};
-			aiColor3D emissiveColor = {2,2,2};
+			aiColor3D diffuseColor = {0.0,0.0,0.0};
+			aiColor3D emissiveColor = {0.0,0.0,0.0};
 
 		
 			if(scene->mMaterials){
+				scene->mMaterials[c]->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);
 				scene->mMaterials[c]->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
-            	scene->mMaterials[c]->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);
 			}
 			glm::vec3 emittance(emissiveColor.r, emissiveColor.g, emissiveColor.b);
 			glm::vec3 diffusereflectance(diffuseColor.r, diffuseColor.g, diffuseColor.b);
-			materials.push_back(new Diffuse(emittance, diffusereflectance));
+
+			if(glm::length(emittance) > 0.001f){
+				materials.push_back(new LightSource(emittance));
+			}
+
+			else if(glm::length(diffusereflectance) > 0.001f){
+				materials.push_back(new Diffuse(diffusereflectance));
+			}
+            	
+			
+			
 		}
 
 		for (unsigned int k = 0; k < scene->mNumMeshes; k++){

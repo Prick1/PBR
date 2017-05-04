@@ -26,7 +26,7 @@ int main( void )
                   background_color,
                   rendering_buffer );
 
-    rt.integrate(); // Renders the final image.
+    rt.integrate(2); // Renders the final image.
 
     // Save the rendered image to a .ppm file.
     rendering_buffer.save( "output_image.ppm" );

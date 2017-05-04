@@ -1,7 +1,6 @@
 #include "specular.h"
 
 Specular::Specular(void){
-    emittance_ = glm::vec3(0.0f);
     materialEnum = isSpecular;
 }
 

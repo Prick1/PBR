@@ -1,7 +1,6 @@
 #include "diffuse.h"
 
-Diffuse::Diffuse(glm::vec3 emittance, glm::vec3 reflectance): reflectance_(reflectance/(float)M_PI){
-	emittance_ = emittance;
+Diffuse::Diffuse(glm::vec3 reflectance): reflectance_(reflectance/(float)M_PI){
     materialEnum = isDiffuse;
 }
 
@@ -22,7 +21,6 @@ Ray Diffuse::getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3 po
     
     onb.setFromV(normal);
     newRayDirection = glm::normalize(onb.getBasisMatrix() * newRayDirection);
-    costheta = glm::dot (normal, newRayDirection);
 	    
 
     return Ray(position + (normal * 0.001f), newRayDirection);
