@@ -15,7 +15,7 @@
 #include "camera.h"
 #include "scene.h"
 #include "buffer.h"
-#define RAYS 100
+#define RAYS 1000
 
 class RayTracer
 {

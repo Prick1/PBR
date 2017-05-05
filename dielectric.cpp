@@ -33,15 +33,15 @@ glm::vec3 Dielectric::Reflect(glm::vec3 incident, glm::vec3 normal){
 
 glm::vec3 Dielectric::Refract(glm::vec3 incident, glm::vec3 normal,float n1, float n2){
     float n = n1 / n2;
-    float cos1 = -glm::dot(normal, incident);
+    float cos1 = glm::dot(normal, incident);
     //cos1 = cos1 < 0? cosI : -cosI;
     float cos2 = 1.0 - n * n * (1.0f - cos1 * cos1);
 
-    if(cos2 < 0.0f)//TIR
-        return glm::vec3(0.0f);
+    /*if(cos2 < 0.0f)//TIR
+        return glm::vec3(0.0f);*/
     
     cos2 = sqrt(cos2);
-    return n * incident + (n * cos1 - cos2) * normal;
+    return n * incident - (n * cos1 - cos2) * normal;
 }
 
 Ray Dielectric::getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3 position){
@@ -71,11 +71,12 @@ Ray Dielectric::getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3
     //incomingDirectionInLocalSpace = -incomingDirectionInLocalSpace;
 
     float schlick = Schlick(intersectionRay.direction_, normal, n1, n2);
+    //std::cerr << std::setprecision(10) << schlick << std::endl;
     if(random < schlick)
         newRayDirection = Reflect(intersectionRay.direction_, normal);
     else{
-        newRayDirection = Refract(intersectionRay.direction_, normal, n1, n2);
         normal = -normal;
+        newRayDirection = Refract(intersectionRay.direction_, normal, n1, n2);
     }
 
     return Ray(position + (normal*0.001f),/*localSpaceToWorld.getBasisMatrix() **/glm::normalize(newRayDirection));

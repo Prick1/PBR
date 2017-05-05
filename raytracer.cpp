@@ -85,34 +85,35 @@ glm::vec3 RayTracer::L(const Ray& r, int depth){
     IntersectionRecord intersection_record;
     intersection_record.t_ = std::numeric_limits< double >::max();
 
-    if(depth < 5){
+    if(depth < 6){
         if(scene_.intersect(r, intersection_record)){
+            float costheta;
 
             Ray reflect = intersection_record.intersectionMaterial->getReflectedRay(r, intersection_record.normal_, intersection_record.position_);
             
             switch(intersection_record.intersectionMaterial->materialEnum){
-                case isLightSource:{
+                case isLightSource:
 
                     Lo = intersection_record.intersectionMaterial->getBSDF();
                     break;
 
-                }
+                
 
-                case isDiffuse:{
+                case isDiffuse:
 
-                    float costheta(glm::dot (intersection_record.normal_, reflect.direction_));
+                    costheta = glm::dot (intersection_record.normal_, reflect.direction_);
                     Lo = 2.0f * float(M_PI) * intersection_record.intersectionMaterial->getBSDF() * L(reflect, ++depth) * costheta;
                     break;
 
-                }
+                
 
                 case isSpecular:
-                case isDielectric:{
+                case isDielectric:
 
                     Lo = intersection_record.intersectionMaterial->getBSDF()*L(reflect, ++depth);
                     break;
 
-                }
+                
 
             }
             

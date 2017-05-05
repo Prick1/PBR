@@ -2,6 +2,8 @@
 #define DIELECTRIC_H_
 
 #include "material.h"
+//#include <iostream>
+//#include <iomanip>
 
 
 class Dielectric: public Material{
