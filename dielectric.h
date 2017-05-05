@@ -15,7 +15,7 @@ class Dielectric: public Material{
 public:
     inline Ray getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3 position);
     inline glm::vec3 getBSDF();
-    Dielectric(float externalMedia = 1.0f,float internalMedia = 1.5f);
+    Dielectric(float externalMedia = 1.0f,float internalMedia = 1.f);
 };
 
 #endif /* DIELECTRIC_H_ */
