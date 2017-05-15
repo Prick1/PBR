@@ -15,7 +15,7 @@
 #include "camera.h"
 #include "scene.h"
 #include "buffer.h"
-#define RAYS 1000
+#define RAYS 10000
 
 class RayTracer
 {
@@ -24,11 +24,12 @@ public:
     RayTracer( Camera &camera,
                const Scene &scene,
                const glm::vec3 background_color,
-               Buffer &buffer );
+               Buffer &buffer, const unsigned int &rays = 1000);
 
     void integrate(const int numberThreads = 4);
 
 private:
+    unsigned int rays_;
 
     std::vector<std::thread*> threads; 
 

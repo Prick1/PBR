@@ -22,6 +22,7 @@ LDFLAGS = -L/usr/lib/gcc/x86_64-linux-gnu/4.8 \
 LDLIBS =  -lassimp -lpthread
 
 SOURCES = $(wildcard *.cpp)
+SOURCES := $(filter-out pathtracerlauncher.cpp, $(SOURCES))
 
 OBJECTS = $(SOURCES:.cpp=.o)
 

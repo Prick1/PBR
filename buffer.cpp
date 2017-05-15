@@ -32,7 +32,8 @@ Buffer::~Buffer( void )
 
 void Buffer::save( const std::string &filename ) const
 {
-    std::clog << "Buffer saving started... ";
+    std::clog << "Buffer saving started... " << std::endl;
+    std::clog << "Saving in " << filename << std::endl;
 
     std::ofstream rendering_file;
 

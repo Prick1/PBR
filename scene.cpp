@@ -45,10 +45,11 @@ void Scene::load( void )
 {
     
 
-    Mesh mesh1("CornellBox.obj");
+    Mesh mesh1("CornellBoxWithoutCrates.obj");
     load_mesh(mesh1, glm::vec3 {0.0f});
     
-    primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.0f, 1.0f, 0.5f }, 0.4f, new Dielectric() }));
+    primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.5f, 0.31f, 0.1f }, 0.3f, new Dielectric(1.0f, 1.458f) }));
+    primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{ -0.3f, 0.31f, -0.3f}, 0.3f , new Specular() }));
 /*
     primitives_.push_back(Primitive::PrimitiveUniquePtr(new Triangle( glm::vec3(-1.0f,-1.0f, 0.0f),  //DOWN
                                                                       glm::vec3(1.0f, -1.0f, 0.0f),

@@ -4,11 +4,13 @@
 RayTracer::RayTracer( Camera &camera,
                       const Scene &scene,
                       const glm::vec3 background_color,
-                      Buffer &buffer ) :
+                      Buffer &buffer, 
+                      const unsigned int &rays ) :
         camera_( camera ),
         scene_( scene ),
         background_color_{ background_color },
-        buffer_( buffer )
+        buffer_( buffer ),
+        rays_( rays )
 {}
 
 void RayTracer::integrate(const int numberThreads)
@@ -61,14 +63,14 @@ void RayTracer::thread_integrate(const int threadId){
 
             for ( std::size_t x = initX; x < maxX; x++ ){
             
-                for(unsigned int i = 0; i < RAYS; i++){
+                for(unsigned int i = 0; i < rays_; i++){
 
                     Ray ray{ camera_.getWorldSpaceRay( glm::vec2{ x + dist(generator), y + dist(generator) } ) };
 
                     buffer_.buffer_data_[x][y] += L(ray,1);
                 }
 
-            buffer_.buffer_data_[x][y] /= RAYS;
+            buffer_.buffer_data_[x][y] /= rays_;
 	        //glm::clamp(buffer_.buffer_data_[x][y], glm::vec3{0.0f, 0.0f, 0.0f}, glm::vec3{1.0f, 1.0f, 1.0f});
             progress[threadId]++;
             }  
