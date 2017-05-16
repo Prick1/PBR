@@ -13,6 +13,9 @@
 class Primitive
 {
 public:
+    glm::vec3 centroid;
+    glm::vec3 maxPoint;
+    glm::vec3 minPoint;
 
     typedef std::unique_ptr< Primitive > PrimitiveUniquePtr;
 

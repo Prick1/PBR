@@ -8,7 +8,11 @@ Sphere::Sphere( const glm::vec3 &center,
         Primitive(material),
         center_{ center },
         radius_{ radius }
-{}
+{
+    centroid = center;
+    minPoint = center - glm::vec3(radius);
+    maxPoint = center + glm::vec3(radius);
+}
 
 bool Sphere::intersect( const Ray &ray,
                         IntersectionRecord &intersection_record ) const

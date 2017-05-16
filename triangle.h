@@ -6,6 +6,8 @@
 #include "intersection_record.h"
 #include "ray.h"
 
+#include <algorithm>
+
 class Triangle : public Primitive
 {
     bool flipNormal_;
