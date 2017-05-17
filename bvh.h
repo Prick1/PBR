@@ -18,6 +18,7 @@ public:
     PrimitiveVector &primitivesReference;
     BVH(const PrimitiveVector &primitivesReferenceIn);
     BVH(const PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveIndexesIn);
+    bool intersect(const Ray &ray, IntersectionRecord &intersection_record);
 }
 
 
