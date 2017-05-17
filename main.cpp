@@ -1,5 +1,6 @@
 #include "main.h"
 
+/* Execute: ./swpathtracer <rays> <threads> <outputname>*/
 int main( int argc, char * argv[])
 {
     unsigned int x_resolution = 512;

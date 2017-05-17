@@ -8,7 +8,7 @@
 
 class BoundingBox: public Primitive
 {
-    inline bool planIntersection(const Ray &ray, const glm::vec3 &normal, const float &distance);
+    bool planIntersection(const Ray &ray, const glm::vec3 &normal, float distance) const;
 public:
 
     BoundingBox( void );

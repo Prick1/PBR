@@ -10,11 +10,11 @@ Triangle::Triangle( const glm::vec3 &point1, const glm::vec3 &point2, const glm:
 	point2_(point2), 
 	point3_(point3)
 {
-	centroid = (point1 + point2 + point3)/3;
-	minPoint = (std::min(std::min(point1.x, point2.x), point3.x), 
+	centroid = (point1 + point2 + point3)/3.0f;
+	minPoint = glm::vec3(std::min(std::min(point1.x, point2.x), point3.x), 
 				std::min(std::min(point1.y, point2.y), point3.y), 
 				std::min(std::min(point1.z, point2.z), point3.z));
-	maxPoint = (std::max(std::max(point1.x, point2.x), point3.x), 
+	maxPoint = glm::vec3(std::max(std::max(point1.x, point2.x), point3.x), 
 				std::max(std::max(point1.y, point2.y), point3.y), 
 				std::max(std::max(point1.z, point2.z), point3.z));
 }

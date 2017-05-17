@@ -11,6 +11,7 @@
 #include "sphere.h" 
 #include "triangle.h"
 #include "mesh.h"
+#include "bvh.h"
 
 class Scene
 {
@@ -19,6 +20,7 @@ public:
     Scene( void );
 
     ~Scene( void );
+    BVH *boundingVolumeHierarchy;
 
     bool intersect( const Ray &ray,
                     IntersectionRecord &intersection_record ) const;
