@@ -8,6 +8,12 @@ BVH* BVH::BVHBuild(PrimitiveVector &primitivesReferenceIn){
     return new BVH(primitivesReferenceIn, primitiveIndex);
 }
 
+glm::vec3 module(glm::vec3 size){
+    for(int i = 0; i < 3; i++)
+        size[i] = size[i] >= 0.0f ? size[i]: -size[i];
+    return size;
+}
+
 BVH::BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveIndexesIn) : primitivesReference(primitivesReferenceIn), primitiveIndexes(primitiveIndexesIn){
     glm::vec3 min(std::numeric_limits<float>::infinity());
     glm::vec3 max(-std::numeric_limits<float>::infinity());
@@ -22,19 +28,13 @@ BVH::BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveInde
     }
     BBox = BoundingBox(min, max);
     if(primitiveIndexesIn->size() > 3){
-        glm::vec3 size = max - min;
-        int axis;
-        if(size.x > size.y){
-            if(size.x > size.z)
-                axis = 0;
-            else 
-                axis = 2;
-        }
-        else{
-            if(size.y > size.z)
-                axis = 1;
-            else 
-                axis = 2;
+        glm::vec3 size = module(max - min);
+        int axis = 0;
+        for (int i = 1; i < 3; i++){
+            if(size[i] >= size[axis]){
+                axis = i;
+            }
+
         }
         Compare comp(&primitivesReferenceIn, axis);
 
