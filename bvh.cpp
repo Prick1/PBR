@@ -15,8 +15,8 @@ glm::vec3 module(glm::vec3 size){
 }
 
 BVH::BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveIndexesIn) : primitivesReference(primitivesReferenceIn), primitiveIndexes(primitiveIndexesIn){
-    glm::vec3 min(std::numeric_limits<float>::infinity());
-    glm::vec3 max(-std::numeric_limits<float>::infinity());
+    glm::vec3 min(std::numeric_limits<float>::max());
+    glm::vec3 max(std::numeric_limits<float>::min());
     //glm::vec3 centroid(0.0f);
     for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
         for(int j = 0; j < 3; j++){
@@ -34,7 +34,6 @@ BVH::BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveInde
             if(size[i] >= size[axis]){
                 axis = i;
             }
-
         }
         Compare comp(&primitivesReferenceIn, axis);
 
@@ -74,11 +73,13 @@ bool BVH::intersect(const Ray &ray, IntersectionRecord &intersection_record){
             bool intersection_result = false; 
             IntersectionRecord tmp_intersection_record;
 
+
             for(unsigned int i = 0; i < primitiveIndexes->size(); i++){
-                if(primitivesReference[(*primitiveIndexes)[i]]->intersect(ray, tmp_intersection_record))
+                if(primitivesReference[(*primitiveIndexes)[i]]->intersect(ray, tmp_intersection_record)){
                     if ( ( tmp_intersection_record.t_ < intersection_record.t_ ) && ( tmp_intersection_record.t_ > 0.0 ) ){
                             intersection_record = tmp_intersection_record;
                              intersection_result = true; // the ray intersects a primitive!
+                    }
                 }
             }
             return intersection_result;
