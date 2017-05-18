@@ -47,11 +47,13 @@ bool Triangle::intersect( const Ray &ray,
 		return false;
 	intersection_record.t_ = t;
 	intersection_record.position_ = ray.origin_ + intersection_record.t_ * ray.direction_;
-	//glm::vec3 center_ = glm::vec3((point1_.x+point2_.x+point3_.x)/3.0f, (point1_.y+point2_.y+point3_.y)/3.0f, (point1_.z+point2_.z+point3_.z)/3.0f);
+	
 	intersection_record.normal_ = glm::normalize(glm::cross(point2_ - point1_, point3_ - point1_));
-	//float testnormaldirection = glm::dot(ray.direction_, intersection_record.normal_);
-	if(flipNormal_)
-	       intersection_record.normal_ = -intersection_record.normal_;
+	if(material_->materialEnum != isDielectric){
+		float testnormaldirection = glm::dot(ray.direction_, intersection_record.normal_);
+		if(testnormaldirection < 0.0f)
+	    	intersection_record.normal_ = -intersection_record.normal_;
+	}
 	intersection_record.intersectionMaterial = material_;
 	return true;	
 }

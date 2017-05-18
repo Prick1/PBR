@@ -15,17 +15,20 @@ Mesh::Mesh(const std::string &pFile){
 			if(scene->mMaterials){
 				scene->mMaterials[c]->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);
 				scene->mMaterials[c]->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
-			}
-			glm::vec3 emittance(emissiveColor.r, emissiveColor.g, emissiveColor.b);
-			glm::vec3 diffusereflectance(diffuseColor.r, diffuseColor.g, diffuseColor.b);
+				glm::vec3 emittance(emissiveColor.r, emissiveColor.g, emissiveColor.b);
+				glm::vec3 diffusereflectance(diffuseColor.r, diffuseColor.g, diffuseColor.b);
 
-			if(glm::length(emittance) > 0.001f){
-				materials.push_back(new LightSource(emittance));
-			}
+				if(glm::length(emittance) > 0.001f){
+					materials.push_back(new LightSource(emittance));
+				}
 
-			else if(glm::length(diffusereflectance) > 0.001f){
-				materials.push_back(new Diffuse(diffusereflectance));
+				else if(glm::length(diffusereflectance) > 0.001f){
+					materials.push_back(new Diffuse(diffusereflectance));
+				}
 			}
+			else
+				materials.push_back(new Diffuse(glm::vec3 (0.7f, 0.5f, 0.3f)));
+			
             	
 			
 			

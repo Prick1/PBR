@@ -3,6 +3,7 @@
 
 #include "boundingbox.h"
 #include <vector>
+#include <algorithm>
 
 
 
@@ -17,10 +18,19 @@ public:
     BVH* rightChild;
     std::vector<int> *primitiveIndexes;
     PrimitiveVector &primitivesReference;
-    BVH(PrimitiveVector &primitivesReferenceIn);
+    static BVH* BVHBuild(PrimitiveVector &primitivesReferenceIn);
     bool intersect(const Ray &ray, IntersectionRecord &intersection_record);
 };
 
+class Compare{
+public:
+    int axis;
+    PrimitiveVector *primitivesReference;
+    Compare(PrimitiveVector *pReferenceIn,int axisIn): axis(axisIn), primitivesReference(pReferenceIn){}
+    bool operator() (int i, int j){
+        return (*primitivesReference)[i]->centroid[axis] < (*primitivesReference)[j]->centroid[axis]; 
+    }
+};
 
 
 
