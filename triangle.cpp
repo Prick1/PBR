@@ -51,7 +51,7 @@ bool Triangle::intersect( const Ray &ray,
 	intersection_record.normal_ = glm::normalize(glm::cross(point2_ - point1_, point3_ - point1_));
 	if(material_->materialEnum != isDielectric){
 		float testnormaldirection = glm::dot(ray.direction_, intersection_record.normal_);
-		if(testnormaldirection < 0.0f)
+		if(testnormaldirection > 0.0f)
 	    	intersection_record.normal_ = -intersection_record.normal_;
 	}
 	intersection_record.intersectionMaterial = material_;

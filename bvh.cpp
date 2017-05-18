@@ -15,13 +15,11 @@ BVH::BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveInde
     for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
         for(int j = 0; j < 3; j++){
             if(primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint[j] < min[j])
-                min[j] = primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint[j];
+                min[j] = primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint[j] - 0.001f;
             if(primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint[j] > max[j])
-                max[j] = primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint[j];
+                max[j] = primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint[j] + 0.001f;
         }
-        //centroid += primitivesReferenceIn[(*primitiveIndexesIn)[i]]->centroid;
     }
-    //centroid /= primitiveIndexesIn->size();
     BBox = BoundingBox(min, max);
     if(primitiveIndexesIn->size() > 3){
         glm::vec3 size = max - min;
@@ -49,12 +47,6 @@ BVH::BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveInde
         for(unsigned int i = primitiveIndexesIn->size()/2; i < primitiveIndexesIn->size() ; i++){
             rightPrimitivesIndexes->push_back((*primitiveIndexesIn)[i]);
         }
-        /*for (unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
-            if(primitivesReferenceIn[(*primitiveIndexesIn)[i]]->centroid[axis] < centroid[axis])
-                leftPrimitivesIndexes->push_back((*primitiveIndexesIn)[i]);
-            else
-                rightPrimitivesIndexes->push_back((*primitiveIndexesIn)[i]);
-        }*/
                         
         leftChild = new BVH(primitivesReferenceIn, leftPrimitivesIndexes);
         rightChild = new BVH(primitivesReferenceIn, rightPrimitivesIndexes);
@@ -67,7 +59,7 @@ BVH::BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveInde
 
 
 bool BVH::intersect(const Ray &ray, IntersectionRecord &intersection_record){
-    if(BBox.intersect(ray, intersection_record)){
+    if(BBox.intersect(ray)){
         if(leftChild != NULL || rightChild != NULL){
             bool intersection_result_left = false;
             bool intersection_result_right = false;
@@ -92,5 +84,7 @@ bool BVH::intersect(const Ray &ray, IntersectionRecord &intersection_record){
             return intersection_result;
         }
     }
-    return false;
+    else{
+        return false;
+    }
 }
