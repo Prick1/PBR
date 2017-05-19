@@ -77,28 +77,29 @@ BVH::BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveInde
     else{
         leftChild = NULL;
         rightChild = NULL;
-        logfile << "Bounding Box Dimensions: " << std::endl <<
+    }
+     logfile << "Bounding Box Dimensions: " << std::endl <<
         "Negative Corner: (" << BBox.negativeCorner.x << ", " << BBox.negativeCorner.y << ", " << BBox.negativeCorner.z << ")" << std::endl <<
         "Positive Corner: (" << BBox.positiveCorner.x << ", " << BBox.positiveCorner.y << ", " << BBox.positiveCorner.z << ")" << std::endl << std::endl <<
         "Primitive Centroids: " << std::endl;
         for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
-            logfile << "(" << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->centroid.x << ", " 
+            logfile << "[" << (*primitiveIndexesIn)[i] << "]" << "(" << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->centroid.x << ", " 
             << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->centroid.y << ", " 
             << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->centroid.z << ")" << std::endl << std::endl;
         } 
         logfile << "Primitive Maximums: " << std::endl;
         for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
-            logfile << "(" << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint.x << ", " 
+            logfile << "[" << (*primitiveIndexesIn)[i] << "]" << "(" << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint.x << ", " 
             << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint.y << ", " 
             << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint.z << ")" << std::endl << std::endl;
         } 
          logfile << "Primitive Minimums: " << std::endl;
         for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
-            logfile << "(" << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint.x << ", " 
+            logfile << "[" << (*primitiveIndexesIn)[i] << "]" << "(" << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint.x << ", " 
             << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint.y << ", " 
             << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint.z << ")" << std::endl << std::endl;
         } 
-    }
+        logfile << "--------------------------------------------------------------------------------" << std::endl; 
 } 
 
 
