@@ -4,6 +4,7 @@
 #include "boundingbox.h"
 #include <vector>
 #include <algorithm>
+#include <fstream>
 
 
 
@@ -11,7 +12,7 @@ typedef std::vector< Primitive::PrimitiveUniquePtr > PrimitiveVector;
 
 class BVH{
 private:
-    BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveIndexesIn);
+    BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveIndexesIn, std::ofstream &logfile);
 public:
     BoundingBox BBox;
     BVH* leftChild;

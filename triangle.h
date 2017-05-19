@@ -33,5 +33,6 @@ public:
     //static const float kIntersectionTestEpsilon_;
 };
 
+
 #endif /* SPHERE_H_ */
 

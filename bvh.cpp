@@ -1,11 +1,39 @@
 #include "bvh.h"
 
+glm::vec3 max_components2(const glm::vec3 &vecA, const glm::vec3 &vecB){
+
+	glm::vec3 max;
+
+	for(int i = 0; i < 3; i++)
+		if(vecA[i] > vecB[i])
+			max[i] = vecA[i];
+		else
+			max[i] = vecB[i];
+
+	return max;
+}
+
+glm::vec3 min_components2(const glm::vec3 &vecA, const glm::vec3 &vecB){
+
+	glm::vec3 min;
+
+	for(int i = 0; i < 3; i++)
+		if(vecA[i] < vecB[i])
+			min[i] = vecA[i];
+		else
+			min[i] = vecB[i];
+
+	return min;
+}
 
 BVH* BVH::BVHBuild(PrimitiveVector &primitivesReferenceIn){
     std::vector<int>* primitiveIndex = new std::vector<int>;
     for(unsigned int i = 0; i < primitivesReferenceIn.size(); i++)
         primitiveIndex->push_back(i);
-    return new BVH(primitivesReferenceIn, primitiveIndex);
+    std::ofstream logfile;
+    logfile.open("log.txt");
+    return new BVH(primitivesReferenceIn, primitiveIndex, logfile);
+    logfile.close();
 }
 
 glm::vec3 module(glm::vec3 size){
@@ -14,17 +42,13 @@ glm::vec3 module(glm::vec3 size){
     return size;
 }
 
-BVH::BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveIndexesIn) : primitivesReference(primitivesReferenceIn), primitiveIndexes(primitiveIndexesIn){
+BVH::BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveIndexesIn, std::ofstream& logfile) : primitivesReference(primitivesReferenceIn), primitiveIndexes(primitiveIndexesIn){
     glm::vec3 min(std::numeric_limits<float>::max());
-    glm::vec3 max(std::numeric_limits<float>::min());
+    glm::vec3 max(-std::numeric_limits<float>::max());
     //glm::vec3 centroid(0.0f);
     for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
-        for(int j = 0; j < 3; j++){
-            if(primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint[j] < min[j])
-                min[j] = primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint[j] - 0.001f;
-            if(primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint[j] > max[j])
-                max[j] = primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint[j] + 0.001f;
-        }
+            max = max_components2(max, primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint);
+            min = min_components2(min, primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint);
     }
     BBox = BoundingBox(min, max);
     if(primitiveIndexesIn->size() > 3){
@@ -47,12 +71,33 @@ BVH::BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveInde
             rightPrimitivesIndexes->push_back((*primitiveIndexesIn)[i]);
         }
                         
-        leftChild = new BVH(primitivesReferenceIn, leftPrimitivesIndexes);
-        rightChild = new BVH(primitivesReferenceIn, rightPrimitivesIndexes);
+        leftChild = new BVH(primitivesReferenceIn, leftPrimitivesIndexes, logfile);
+        rightChild = new BVH(primitivesReferenceIn, rightPrimitivesIndexes, logfile);
     }
     else{
         leftChild = NULL;
         rightChild = NULL;
+        logfile << "Bounding Box Dimensions: " << std::endl <<
+        "Negative Corner: (" << BBox.negativeCorner.x << ", " << BBox.negativeCorner.y << ", " << BBox.negativeCorner.z << ")" << std::endl <<
+        "Positive Corner: (" << BBox.positiveCorner.x << ", " << BBox.positiveCorner.y << ", " << BBox.positiveCorner.z << ")" << std::endl << std::endl <<
+        "Primitive Centroids: " << std::endl;
+        for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
+            logfile << "(" << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->centroid.x << ", " 
+            << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->centroid.y << ", " 
+            << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->centroid.z << ")" << std::endl << std::endl;
+        } 
+        logfile << "Primitive Maximums: " << std::endl;
+        for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
+            logfile << "(" << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint.x << ", " 
+            << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint.y << ", " 
+            << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint.z << ")" << std::endl << std::endl;
+        } 
+         logfile << "Primitive Minimums: " << std::endl;
+        for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
+            logfile << "(" << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint.x << ", " 
+            << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint.y << ", " 
+            << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint.z << ")" << std::endl << std::endl;
+        } 
     }
 } 
 
@@ -89,3 +134,4 @@ bool BVH::intersect(const Ray &ray, IntersectionRecord &intersection_record){
         return false;
     }
 }
+
