@@ -27,6 +27,10 @@ public:
 
     glm::vec3 point3_ = { 0.0f, 1.0f, 0.0f };
 
+    glm::vec3 min_components(const glm::vec3 &vecA, const glm::vec3 &vecB);
+
+    glm::vec3 max_components(const glm::vec3 &vecA, const glm::vec3 &vecB);
+
 
 //private:
 

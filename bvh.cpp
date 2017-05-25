@@ -69,7 +69,7 @@ void BVH::BVHBuildNode(BoundingBox *node, std::vector<int> &primitivesIndex){
 
     int trying = 0;
     int initAxis = axis;
-    float minCost = FLT_MAX;
+    float minCost = std::numeric_limits< float >::max();
     glm::vec3 bestCenter;
     int bestAxis = initAxis;
     glm::vec3 auxSize;
@@ -79,9 +79,10 @@ void BVH::BVHBuildNode(BoundingBox *node, std::vector<int> &primitivesIndex){
     glm::vec3 currentPositiveCorner; 
     totalArea = (bSize.x*bSize.y + bSize.y*bSize.z + bSize.x*bSize.z) * 2.0f;
     noDivCost = primitivesIndex.size();
+    
 
     do{
-        while(trying++ < 32){
+        while(trying++ < 2){
             for(int primId: primitivesIndex){
                 if(primitives[primId]->center_[axis] < node->center[axis])
                     leftPrim.push_back(primId);
@@ -102,8 +103,7 @@ void BVH::BVHBuildNode(BoundingBox *node, std::vector<int> &primitivesIndex){
                 leftArea = (auxSize.x*auxSize.y + auxSize.y*auxSize.z + auxSize.x*auxSize.z) * 2.0f;
                 leftCost = (leftArea / totalArea) * leftPrim.size();
             }
-            else{leftCost = 0.0f;}
-
+            else{ leftCost = 0.0f;}
 
             if(rightPrim.size() > 0){
                 currentNegativeCorner = primitives[leftPrim[0]]->negativeCorner;
@@ -119,8 +119,9 @@ void BVH::BVHBuildNode(BoundingBox *node, std::vector<int> &primitivesIndex){
                 rightCost = (rightArea / totalArea) * rightPrim.size();
             }
             else{rightCost = 0.0f;}
+            rightCost = 0.0f;
+            totalCost = leftCost + rightCost;
 
-            totalCost = 2 + leftCost + rightCost;
 
             if(minCost > totalCost){
                 minCost = totalCost;

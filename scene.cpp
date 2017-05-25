@@ -40,10 +40,10 @@ void CheckIntersection::operator()(BoundingBox* node){
 bool Scene::intersect( const Ray &ray,
                        IntersectionRecord &intersection_record ) const
 {
-    /*CheckIntersection check_intersection{ray, intersection_record, primitives_};
+    CheckIntersection check_intersection{ray, intersection_record, primitives_};
     check_intersection(bvh->root);
     intersection_record = check_intersection.intersection_record;
-    return check_intersection.intersection_result;*/
+    return check_intersection.intersection_result;
     return false;
 }
 

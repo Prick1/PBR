@@ -1,6 +1,6 @@
 #include "triangle.h"
 
-glm::vec3 max_components(const glm::vec3 &vecA, const glm::vec3 &vecB){
+glm::vec3 Triangle::max_components(const glm::vec3 &vecA, const glm::vec3 &vecB){
 
 	glm::vec3 max;
 
@@ -13,7 +13,7 @@ glm::vec3 max_components(const glm::vec3 &vecA, const glm::vec3 &vecB){
 	return max;
 }
 
-glm::vec3 min_components(const glm::vec3 &vecA, const glm::vec3 &vecB){
+glm::vec3 Triangle::min_components(const glm::vec3 &vecA, const glm::vec3 &vecB){
 
 	glm::vec3 min;
 
