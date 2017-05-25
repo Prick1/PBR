@@ -9,9 +9,8 @@ Sphere::Sphere( const glm::vec3 &center,
         center_{ center },
         radius_{ radius }
 {
-    centroid = center;
-    minPoint = center - glm::vec3(radius);
-    maxPoint = center + glm::vec3(radius);
+    negativeCorner = center - glm::vec3(radius);
+    positiveCorner = center + glm::vec3(radius);
 }
 
 bool Sphere::intersect( const Ray &ray,

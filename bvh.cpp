@@ -1,6 +1,8 @@
 #include "bvh.h"
 
-glm::vec3 max_components2(const glm::vec3 &vecA, const glm::vec3 &vecB){
+BVH::BVH(PrimitiveVector &primitivesReferenceIn): primitives(primitivesReferenceIn){}
+
+glm::vec3 BVH::max_components(const glm::vec3 &vecA, const glm::vec3 &vecB){
 
 	glm::vec3 max;
 
@@ -13,7 +15,7 @@ glm::vec3 max_components2(const glm::vec3 &vecA, const glm::vec3 &vecB){
 	return max;
 }
 
-glm::vec3 min_components2(const glm::vec3 &vecA, const glm::vec3 &vecB){
+glm::vec3 BVH::min_components(const glm::vec3 &vecA, const glm::vec3 &vecB){
 
 	glm::vec3 min;
 
@@ -25,15 +27,12 @@ glm::vec3 min_components2(const glm::vec3 &vecA, const glm::vec3 &vecB){
 
 	return min;
 }
-
-BVH* BVH::BVHBuild(PrimitiveVector &primitivesReferenceIn){
-    std::vector<int>* primitiveIndex = new std::vector<int>;
-    for(unsigned int i = 0; i < primitivesReferenceIn.size(); i++)
-        primitiveIndex->push_back(i);
-    std::ofstream logfile;
-    logfile.open("log.txt");
-    return new BVH(primitivesReferenceIn, primitiveIndex, logfile);
-    logfile.close();
+void BVH::BVHBuild(){
+    std::vector<int> primitivesIndex;
+    for(unsigned int i = 0; i < primitives.size(); i++)
+        primitivesIndex.push_back(i);
+    root = new BoundingBox;
+    BVHBuildNode(root, primitivesIndex);
 }
 
 glm::vec3 module(glm::vec3 size){
@@ -42,97 +41,130 @@ glm::vec3 module(glm::vec3 size){
     return size;
 }
 
-BVH::BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveIndexesIn, std::ofstream& logfile) : primitivesReference(primitivesReferenceIn), primitiveIndexes(primitiveIndexesIn){
-    glm::vec3 min(std::numeric_limits<float>::max());
-    glm::vec3 max(-std::numeric_limits<float>::max());
-    //glm::vec3 centroid(0.0f);
-    for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
-            max = max_components2(max, primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint);
-            min = min_components2(min, primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint);
+void BVH::BVHBuildNode(BoundingBox *node, std::vector<int> &primitivesIndex){
+    node->primitivesIndex = nullptr;
+    node->negativeCorner = primitives[primitivesIndex[0]] -> negativeCorner;
+    node->positiveCorner = primitives[primitivesIndex[0]] -> positiveCorner;
+    
+    for(int primId: primitivesIndex){
+        node->negativeCorner = min_components(primitives[primId]->negativeCorner, node->negativeCorner);
+        node->positiveCorner = max_components(primitives[primId]->positiveCorner, node->positiveCorner);
     }
-    BBox = BoundingBox(min, max);
-    if(primitiveIndexesIn->size() > 3){
-        glm::vec3 size = module(max - min);
-        int axis = 0;
-        for (int i = 1; i < 3; i++){
-            if(size[i] >= size[axis]){
-                axis = i;
-            }
-        }
-        Compare comp(&primitivesReferenceIn, axis);
 
-        std::sort(primitiveIndexesIn->begin(), primitiveIndexesIn->end(), comp);
-        std::vector<int> *leftPrimitivesIndexes = new std::vector<int>;
-        std::vector<int> *rightPrimitivesIndexes = new std::vector<int>;
-        for(unsigned int i = 0; i < primitiveIndexesIn->size()/2 ; i++){
-            leftPrimitivesIndexes->push_back((*primitiveIndexesIn)[i]);
+    node->center = node->negativeCorner;
+
+
+    glm::vec3 bSize = node->positiveCorner - node->negativeCorner;
+    float aux = std::max(bSize.x, std::max(bSize.y, bSize.z));
+    int axis;
+    if (aux == bSize.x)
+        axis = 0;
+    else if (aux == bSize.y)
+        axis = 1;
+    else
+        axis = 2;
+
+    std::vector<int> leftPrim;
+    std::vector<int> rightPrim;
+
+    int trying = 0;
+    int initAxis = axis;
+    float minCost = FLT_MAX;
+    glm::vec3 bestCenter;
+    int bestAxis = initAxis;
+    glm::vec3 auxSize;
+	float leftArea, rightArea, totalArea;
+	float leftCost, rightCost, totalCost, noDivCost;
+	glm::vec3 currentNegativeCorner;
+    glm::vec3 currentPositiveCorner; 
+    totalArea = (bSize.x*bSize.y + bSize.y*bSize.z + bSize.x*bSize.z) * 2.0f;
+    noDivCost = primitivesIndex.size();
+
+    do{
+        while(trying++ < 32){
+            for(int primId: primitivesIndex){
+                if(primitives[primId]->center_[axis] < node->center[axis])
+                    leftPrim.push_back(primId);
+                else
+                    rightPrim.push_back(primId);
+            }
+
+            if(leftPrim.size() > 0){
+                currentNegativeCorner = primitives[leftPrim[0]]->negativeCorner;
+                currentPositiveCorner = primitives[rightPrim[0]]->positiveCorner;
+
+                for(int primId: leftPrim){
+                    currentNegativeCorner = min_components(primitives[primId]->negativeCorner, currentNegativeCorner);
+                    currentPositiveCorner = max_components(primitives[primId]->positiveCorner, currentPositiveCorner);
+                }
+
+                auxSize = (currentPositiveCorner - currentNegativeCorner);
+                leftArea = (auxSize.x*auxSize.y + auxSize.y*auxSize.z + auxSize.x*auxSize.z) * 2.0f;
+                leftCost = (leftArea / totalArea) * leftPrim.size();
+            }
+            else{leftCost = 0.0f;}
+
+
+            if(rightPrim.size() > 0){
+                currentNegativeCorner = primitives[leftPrim[0]]->negativeCorner;
+                currentPositiveCorner = primitives[rightPrim[0]]->positiveCorner;
+
+                for(int primId: rightPrim){
+                    currentNegativeCorner = min_components(primitives[primId]->negativeCorner, currentNegativeCorner);
+                    currentPositiveCorner = max_components(primitives[primId]->positiveCorner, currentPositiveCorner);
+                }
+
+                auxSize = (currentPositiveCorner - currentNegativeCorner);
+                rightArea = (auxSize.x*auxSize.y + auxSize.y*auxSize.z + auxSize.x*auxSize.z) * 2.0f;
+                rightCost = (rightArea / totalArea) * rightPrim.size();
+            }
+            else{rightCost = 0.0f;}
+
+            totalCost = 2 + leftCost + rightCost;
+
+            if(minCost > totalCost){
+                minCost = totalCost;
+                bestCenter = node->center;
+                bestAxis = axis;
+            }
+
+            node->center[axis] = node->negativeCorner[axis] + bSize[axis] * (trying / 32.0f);
+
+            leftPrim.clear();
+            rightPrim.clear();
         }
-        for(unsigned int i = primitiveIndexesIn->size()/2; i < primitiveIndexesIn->size() ; i++){
-            rightPrimitivesIndexes->push_back((*primitiveIndexesIn)[i]);
-        }
-                        
-        leftChild = new BVH(primitivesReferenceIn, leftPrimitivesIndexes, logfile);
-        rightChild = new BVH(primitivesReferenceIn, rightPrimitivesIndexes, logfile);
+
+        axis = (axis+1)%3;
+        trying = 0;
+
+    }while(axis != initAxis);
+
+    if(noDivCost < minCost){
+        node->primitivesIndex = new std::vector<int>(primitivesIndex.size());
+        *(node->primitivesIndex) = primitivesIndex;
+        node->left = nullptr;
+        node->right = nullptr;
+        return;
     }
-    else{
-        leftChild = NULL;
-        rightChild = NULL;
+
+    node->center = bestCenter;
+    axis = bestAxis;
+
+    for(int primId : primitivesIndex){
+        if(primitives[primId]->center_[axis] < node->center[axis])
+            leftPrim.push_back(primId);
+        else
+            rightPrim.push_back(primId);
     }
-     logfile << "Bounding Box Dimensions: " << std::endl <<
-        "Negative Corner: (" << BBox.negativeCorner.x << ", " << BBox.negativeCorner.y << ", " << BBox.negativeCorner.z << ")" << std::endl <<
-        "Positive Corner: (" << BBox.positiveCorner.x << ", " << BBox.positiveCorner.y << ", " << BBox.positiveCorner.z << ")" << std::endl << std::endl <<
-        "Primitive Centroids: " << std::endl;
-        for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
-            logfile << "[" << (*primitiveIndexesIn)[i] << "]" << "(" << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->centroid.x << ", " 
-            << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->centroid.y << ", " 
-            << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->centroid.z << ")" << std::endl << std::endl;
-        } 
-        logfile << "Primitive Maximums: " << std::endl;
-        for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
-            logfile << "[" << (*primitiveIndexesIn)[i] << "]" << "(" << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint.x << ", " 
-            << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint.y << ", " 
-            << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->maxPoint.z << ")" << std::endl << std::endl;
-        } 
-         logfile << "Primitive Minimums: " << std::endl;
-        for(unsigned int i = 0; i < primitiveIndexesIn->size(); i++){
-            logfile << "[" << (*primitiveIndexesIn)[i] << "]" << "(" << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint.x << ", " 
-            << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint.y << ", " 
-            << primitivesReferenceIn[(*primitiveIndexesIn)[i]]->minPoint.z << ")" << std::endl << std::endl;
-        } 
-        logfile << "--------------------------------------------------------------------------------" << std::endl; 
+    
+    node->left = new BoundingBox;
+    BVHBuildNode(node->left, leftPrim);
+
+    node->right = new BoundingBox;
+    BVHBuildNode(node->right, rightPrim);
+
 } 
 
 
-bool BVH::intersect(const Ray &ray, IntersectionRecord &intersection_record){
-    if(BBox.intersect(ray)){
-        if(leftChild != NULL || rightChild != NULL){
-            bool intersection_result_left = false;
-            bool intersection_result_right = false;
-            if(leftChild != NULL)
-                intersection_result_left = leftChild->intersect(ray, intersection_record);
-            if(rightChild != NULL)
-                intersection_result_right = rightChild->intersect(ray, intersection_record);
-            return intersection_result_left || intersection_result_right;
-        }
 
-        else{
-            bool intersection_result = false; 
-            IntersectionRecord tmp_intersection_record;
-
-
-            for(unsigned int i = 0; i < primitiveIndexes->size(); i++){
-                if(primitivesReference[(*primitiveIndexes)[i]]->intersect(ray, tmp_intersection_record)){
-                    if ( ( tmp_intersection_record.t_ < intersection_record.t_ ) && ( tmp_intersection_record.t_ > 0.0 ) ){
-                            intersection_record = tmp_intersection_record;
-                             intersection_result = true; // the ray intersects a primitive!
-                    }
-                }
-            }
-            return intersection_result;
-        }
-    }
-    else{
-        return false;
-    }
-}
 

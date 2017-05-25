@@ -6,11 +6,47 @@ Scene::Scene( void )
 Scene::~Scene( void )
 {}
 
+CheckIntersection::CheckIntersection(const Ray &ray, IntersectionRecord &intersection_record, const std::vector< Primitive::PrimitiveUniquePtr > &primitivesIn): ray(ray), primitives(primitivesIn){
+    this->intersection_record = intersection_record;
+    this->intersection_record.t_ = std::numeric_limits< double >::max();
+}
+
+void CheckIntersection::operator()(BoundingBox* node){
+    if(node == nullptr)
+        return;
+    
+    if(node->intersect(ray)){
+
+
+        if(node->primitivesIndex == nullptr){
+            this->operator()(node->left);
+            this->operator()(node->right);
+            return;
+        }
+
+        for(int primitiveId: *(node->primitivesIndex))
+            
+            if(primitives[primitiveId]->intersect(ray, tmp_intersection_record))
+                
+                if( (tmp_intersection_record.t_ < intersection_record.t_) && (tmp_intersection_record.t_ > 0.0) ){
+                    intersection_record = tmp_intersection_record;
+                    intersection_result = true;
+                }
+            
+    }
+}
+
+
 bool Scene::intersect( const Ray &ray,
                        IntersectionRecord &intersection_record ) const
 {
-   return boundingVolumeHierarchy->intersect(ray, intersection_record);
+    /*CheckIntersection check_intersection{ray, intersection_record, primitives_};
+    check_intersection(bvh->root);
+    intersection_record = check_intersection.intersection_record;
+    return check_intersection.intersection_result;*/
+    return false;
 }
+
 void Scene::load_mesh(Mesh& mesh1,const glm::vec3 position){
     
     if(mesh1.created){
@@ -40,8 +76,7 @@ void Scene::load( void )
     //primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.5f, 0.31f, 0.1f }, 0.3f, new Dielectric(1.0f, 1.458f) }));
     //primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{ -0.3f, 0.31f, -0.3f}, 0.3f , new Specular() }));
 
-
-    boundingVolumeHierarchy = BVH::BVHBuild(primitives_);
-						       
+    bvh = new BVH(primitives_);
+    bvh->BVHBuild();						       
 }
 

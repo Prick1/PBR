@@ -2,9 +2,8 @@
 #define BVH_H_
 
 #include "boundingbox.h"
-#include <vector>
 #include <algorithm>
-#include <fstream>
+#include <climits>
 
 
 
@@ -12,27 +11,15 @@ typedef std::vector< Primitive::PrimitiveUniquePtr > PrimitiveVector;
 
 class BVH{
 private:
-    BVH(PrimitiveVector &primitivesReferenceIn, std::vector<int> *primitiveIndexesIn, std::ofstream &logfile);
+    glm::vec3 max_components(const glm::vec3 &vecA, const glm::vec3 &vecB);
+    glm::vec3 min_components(const glm::vec3 &vecA, const glm::vec3 &vecB);
+    void BVHBuildNode(BoundingBox *node, std::vector<int> &primitivesIndex);
 public:
-    BoundingBox BBox;
-    BVH* leftChild;
-    BVH* rightChild;
-    std::vector<int> *primitiveIndexes;
-    PrimitiveVector &primitivesReference;
-    static BVH* BVHBuild(PrimitiveVector &primitivesReferenceIn);
-    bool intersect(const Ray &ray, IntersectionRecord &intersection_record);
+    BVH(PrimitiveVector &primitivesReferenceIn);
+    BoundingBox* root;
+    PrimitiveVector &primitives;
+    void BVHBuild();
 };
-
-class Compare{
-public:
-    int axis;
-    PrimitiveVector *primitivesReference;
-    Compare(PrimitiveVector *pReferenceIn,int axisIn): axis(axisIn), primitivesReference(pReferenceIn){}
-    bool operator() (int i, int j){
-        return (*primitivesReference)[i]->centroid[axis] < (*primitivesReference)[j]->centroid[axis]; 
-    }
-};
-
 
 
 

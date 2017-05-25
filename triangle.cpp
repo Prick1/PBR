@@ -36,9 +36,9 @@ Triangle::Triangle( const glm::vec3 &point1, const glm::vec3 &point2, const glm:
 	point2_(point2), 
 	point3_(point3)
 {
-	centroid = (point1 + point2 + point3)/3.0f;
-	maxPoint = glm::vec3(max_components(max_components(point1, point2), point3));
-	minPoint = glm::vec3(min_components(min_components(point1, point2), point3));
+	positiveCorner = glm::vec3(max_components(max_components(point1, point2), point3));
+	negativeCorner = glm::vec3(min_components(min_components(point1, point2), point3));
+	center_ = (positiveCorner + negativeCorner) * 0.5f;
 }
 
 bool Triangle::intersect( const Ray &ray,

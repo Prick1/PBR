@@ -20,7 +20,7 @@ public:
     Scene( void );
 
     ~Scene( void );
-    BVH *boundingVolumeHierarchy;
+    BVH* bvh = nullptr;
 
     bool intersect( const Ray &ray,
                     IntersectionRecord &intersection_record ) const;
@@ -30,6 +30,17 @@ public:
 
     std::vector< Primitive::PrimitiveUniquePtr > primitives_;
 
+};
+
+struct CheckIntersection{
+    CheckIntersection(const Ray &ray, IntersectionRecord &intersection_record, const std::vector< Primitive::PrimitiveUniquePtr > &primitivesIn);
+    void operator()(BoundingBox *node);
+    
+    bool intersection_result = false;
+    IntersectionRecord tmp_intersection_record;
+    IntersectionRecord intersection_record;
+    const Ray ray;
+    const std::vector< Primitive::PrimitiveUniquePtr > &primitives;
 };
 
 #endif /* SCENE_H_ */
