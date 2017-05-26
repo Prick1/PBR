@@ -48,7 +48,7 @@ glm::vec3 Metal::getBSDF(Ray incidentRay, Ray outGoingRay, glm::vec3 normal){
     float pdf = (nh) / (4 * hwi);
 
     //std::cout << ct.x << " " << ct.y << " " <<  ct.z << " " << " " << D << " " << G << std::endl;
-    return ct/pdf;
+    return ( ct * cosnwo )/pdf;
     
 }
 
@@ -57,7 +57,7 @@ Ray Metal::getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3 posi
     ONB onb;
     onb.setFromV(normal);
 
-    glm::vec3 localspaceDirection = glm::normalize(glm::transpose(onb.getBasisMatrix()) * intersectionRay.direction_);
+    glm::vec3 localspaceDirection = -glm::normalize(glm::transpose(onb.getBasisMatrix()) * intersectionRay.direction_);
 
     r1 = rand() / (float)RAND_MAX;
     r2 = rand() / (float)RAND_MAX;

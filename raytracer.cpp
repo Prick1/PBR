@@ -100,7 +100,6 @@ glm::vec3 RayTracer::L(const Ray& r, int depth){
                     Lo = intersection_record.intersectionMaterial->getBSDF(r, reflect, intersection_record.normal_);
                     break;
 
-                case isMetal:
                 case isDiffuse:
 
                     costheta = glm::dot (intersection_record.normal_, reflect.direction_);
@@ -108,7 +107,7 @@ glm::vec3 RayTracer::L(const Ray& r, int depth){
                     break;
 
                 
-                
+                case isMetal:
                 case isSpecular:
                 case isDielectric:
 
