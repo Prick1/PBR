@@ -9,8 +9,8 @@ Sphere::Sphere( const glm::vec3 &center,
         center_{ center },
         radius_{ radius }
 {
-    negativeCorner = center - glm::vec3(radius);
-    positiveCorner = center + glm::vec3(radius);
+//    negativeCorner = center - glm::vec3(radius);
+  //  positiveCorner = center + glm::vec3(radius);
 }
 
 bool Sphere::intersect( const Ray &ray,
@@ -49,3 +49,12 @@ bool Sphere::intersect( const Ray &ray,
     return true;
 }
 
+BBox Sphere::getAABB( void ) const
+{
+    BBox aabb;
+
+    aabb.min_ = center_ - radius_;
+    aabb.max_ = center_ + radius_;
+    aabb.centroid_ = center_;
+    return aabb;
+}

@@ -9,13 +9,14 @@
 
 #include "ray.h"
 #include "intersection_record.h"
+#include "bbox.h"
 
 class Primitive
 {
 public:
-    glm::vec3 center_;
-    glm::vec3 positiveCorner;
-    glm::vec3 negativeCorner;
+    //glm::vec3 center_;
+    //glm::vec3 positiveCorner;
+    //glm::vec3 negativeCorner;
 
     typedef std::unique_ptr< Primitive > PrimitiveUniquePtr;
 
@@ -29,6 +30,8 @@ public:
 
     virtual bool intersect( const Ray &ray,
                             IntersectionRecord &intersection_record ) const = 0;
+
+    virtual BBox getAABB( void ) const = 0;
 };
 
 #endif /* PRIMITIVE_H_ */

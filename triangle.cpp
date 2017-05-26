@@ -1,5 +1,5 @@
 #include "triangle.h"
-
+/*
 glm::vec3 Triangle::max_components(const glm::vec3 &vecA, const glm::vec3 &vecB){
 
 	glm::vec3 max;
@@ -24,7 +24,7 @@ glm::vec3 Triangle::min_components(const glm::vec3 &vecA, const glm::vec3 &vecB)
 			min[i] = vecB[i];
 
 	return min;
-}
+}*/
 
 Triangle::Triangle(void){}
 
@@ -36,9 +36,9 @@ Triangle::Triangle( const glm::vec3 &point1, const glm::vec3 &point2, const glm:
 	point2_(point2), 
 	point3_(point3)
 {
-	positiveCorner = glm::vec3(max_components(max_components(point1, point2), point3));
-	negativeCorner = glm::vec3(min_components(min_components(point1, point2), point3));
-	center_ = (positiveCorner + negativeCorner) * 0.5f;
+//	positiveCorner = glm::vec3(max_components(max_components(point1, point2), point3));
+//	negativeCorner = glm::vec3(min_components(min_components(point1, point2), point3));
+//	center_ = (positiveCorner + negativeCorner) * 0.5f;
 }
 
 bool Triangle::intersect( const Ray &ray,
@@ -78,4 +78,15 @@ bool Triangle::intersect( const Ray &ray,
 	}
 	intersection_record.intersectionMaterial = material_;
 	return true;	
+}
+
+
+BBox Triangle::getAABB( void ) const
+{
+	BBox aabb;
+
+	aabb.min_ = glm::min( glm::min( point1_, point2_ ), point3_ );
+	aabb.max_ = glm::max( glm::max( point1_, point2_ ), point3_ );
+	aabb.centroid_ = ( 1.0f / 3.0f ) * ( point1_ + point2_ + point3_ );
+	return aabb;
 }

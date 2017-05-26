@@ -16,11 +16,15 @@
 class Scene
 {
 public:
+    enum AccelerationStructure
+    {
+        NONE,
+        BVH_SAH
+    };
 
     Scene( void );
 
     ~Scene( void );
-    BVH* bvh = nullptr;
 
     bool intersect( const Ray &ray,
                     IntersectionRecord &intersection_record ) const;
@@ -28,11 +32,21 @@ public:
     void load( void );
     void load_mesh(Mesh& mesh1,const glm::vec3 position);
 
+     void buildAccelerationStructure( void );
+
     std::vector< Primitive::PrimitiveUniquePtr > primitives_;
+
+     AccelerationStructure acceleration_structure_ = AccelerationStructure::NONE;
+
+private:
+    void buildBVH( void );
+
+    const BVH *bvh_ = nullptr;
 
 };
 
-struct CheckIntersection{
+
+/*struct CheckIntersection{
     CheckIntersection(const Ray &ray, IntersectionRecord &intersection_record, const std::vector< Primitive::PrimitiveUniquePtr > &primitivesIn);
     void operator()(BoundingBox *node);
     
@@ -41,7 +55,7 @@ struct CheckIntersection{
     IntersectionRecord intersection_record;
     const Ray ray;
     const std::vector< Primitive::PrimitiveUniquePtr > &primitives;
-};
+};*/
 
 #endif /* SCENE_H_ */
 
