@@ -2,8 +2,7 @@
 #define DIELECTRIC_H_
 
 #include "material.h"
-//#include <iostream>
-//#include <iomanip>
+
 
 
 class Dielectric: public Material{
@@ -14,7 +13,7 @@ class Dielectric: public Material{
     inline glm::vec3 Reflect(glm::vec3 incident,glm::vec3 normal);
 public:
     inline Ray getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3 position);
-    inline glm::vec3 getBSDF();
+    inline glm::vec3 getBSDF(Ray incidentRay, Ray outGoingRay, glm::vec3 normal);
     Dielectric(float externalMedia = 1.0f,float internalMedia = 1.1f);
 };
 

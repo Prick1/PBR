@@ -6,6 +6,7 @@
 #include "diffuse.h"
 #include "specular.h"
 #include "dielectric.h"
+#include "metal.h"
 
 #include "ray.h"
 #include "intersection_record.h"

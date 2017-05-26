@@ -72,6 +72,6 @@ Ray Dielectric::getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3
 
 }
 
-glm::vec3 Dielectric::getBSDF(){
+glm::vec3 Dielectric::getBSDF(Ray incidentRay, Ray outGoingRay, glm::vec3 normal){
     return glm::vec3(1.0f);
 }

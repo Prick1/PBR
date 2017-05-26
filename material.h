@@ -10,14 +10,15 @@ typedef enum tMaterial{
     isDiffuse,
     isSpecular,
     isLightSource,
-    isDielectric
+    isDielectric,
+    isMetal
 }tMaterial;
 class Material{
 public:
     tMaterial materialEnum;
     //glm::vec3 emittance_;
     virtual Ray getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3 position) = 0;
-    virtual glm::vec3 getBSDF() = 0;
+    virtual glm::vec3 getBSDF(Ray incidentRay, Ray outGoingRay, glm::vec3 normal) = 0;
 };
 
 #endif /* MATERIAL_H_ */

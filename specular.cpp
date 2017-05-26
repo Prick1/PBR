@@ -13,6 +13,6 @@ Ray Specular::getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3 p
     return Ray(position + (normal*0.001f), reflectedDirection);
 }
 
-glm::vec3 Specular::getBSDF(){
+glm::vec3 Specular::getBSDF(Ray incidentRay, Ray outGoingRay, glm::vec3 normal){
     return glm::vec3(1.0f);
 }

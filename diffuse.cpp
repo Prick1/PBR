@@ -26,6 +26,6 @@ Ray Diffuse::getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3 po
     return Ray(position + (normal * 0.001f), newRayDirection);
 }
 
-glm::vec3 Diffuse::getBSDF(){
+glm::vec3 Diffuse::getBSDF(Ray incidentRay, Ray outGoingRay, glm::vec3 normal){
 	return reflectance_;
 }

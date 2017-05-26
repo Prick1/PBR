@@ -11,6 +11,6 @@ Ray LightSource::getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec
     return Ray(glm::vec3(0), glm::vec3(0));
 }
 
-glm::vec3 LightSource::getBSDF(){
+glm::vec3 LightSource::getBSDF(Ray incidentRay, Ray outGoingRay, glm::vec3 normal){
 	return emittance_;
 }

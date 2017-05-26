@@ -18,8 +18,8 @@ int main( int argc, char * argv[])
     
     scene.load();
 
-    scene.acceleration_structure_ = scene.BVH_SAH;
-    scene.buildAccelerationStructure();
+    //scene.acceleration_structure_ = scene.BVH_SAH;
+    //scene.buildAccelerationStructure();
 
     Buffer rendering_buffer{ x_resolution, y_resolution };
     glm::vec3 background_color{ 0.0f, 0.0f, 0.0f };
