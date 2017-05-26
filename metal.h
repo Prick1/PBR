@@ -13,7 +13,6 @@ public:
     Ray getReflectedRay(Ray intersectionRay, glm::vec3 normal, glm::vec3 position);
     glm::vec3 getBSDF(Ray incidentRay, Ray outGoingRay, glm::vec3 normal);
     Metal(float roughnessFactor, glm::vec3 reflectance_);
-    inline float abs(float in);
 };
 
 #endif /* METAL_H_ */

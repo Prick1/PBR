@@ -100,7 +100,6 @@ glm::vec3 RayTracer::L(const Ray& r, int depth){
                     Lo = intersection_record.intersectionMaterial->getBSDF(r, reflect, intersection_record.normal_);
                     break;
 
-                
                 case isMetal:
                 case isDiffuse:
 
@@ -109,7 +108,7 @@ glm::vec3 RayTracer::L(const Ray& r, int depth){
                     break;
 
                 
-
+                
                 case isSpecular:
                 case isDielectric:
 
