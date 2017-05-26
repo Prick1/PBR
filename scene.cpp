@@ -120,7 +120,7 @@ void Scene::load( void )
     //Mesh mesh2("monkey.obj");
     //load_mesh(mesh2, glm::vec3 (0.0f, 1.0f, -0.5f));
     
-    primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.5f, 0.31f, 0.1f }, 0.3f, new Metal(0.4f, glm::vec3(0.95f, 0.64f, 0.54f)) }));
+    primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.5f, 0.31f, 0.1f }, 0.3f, new Metal(0.1f, glm::vec3(0.95f, 0.64f, 0.54f)) }));
     primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{ -0.3f, 0.31f, -0.3f}, 0.3f , new Specular() }));
 
     //bvh = new BVH(primitives_);

@@ -23,11 +23,14 @@ glm::vec3 Metal::getBSDF(Ray incidentRay, Ray outGoingRay, glm::vec3 normal){
     float hwi = glm::abs(glm::dot(h, w_i));
     
     //beckmann
-    float nh2 = nh * nh;
+
+    //it's happening a strange bug when Beckmann distribution is used, but we can discart it because Beckmann is used on both 
+    //BSDF and PDF functions, canceling each other
+    /*float nh2 = nh * nh;
     float m2 = roughnessFactor * roughnessFactor;
     float d1 = 1/((float)M_PI * m2 * nh2 * nh2);
     float d2 = (nh2 - 1) / (m2 * nh2);
-    double D = d1 * glm::exp(d2);
+    float D = d1 * glm::exp(d2);*/
 
     //std::cout << D << " "<< nh2 << " " << m2 << " " << d1 << " " << d2 << " " << std::endl; 
 
