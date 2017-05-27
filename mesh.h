@@ -14,12 +14,13 @@
 class Mesh{
 public:
     Mesh(void){}
-    Mesh(const std::string &pFile);
+    Mesh(const std::string &pFile, Material* material = NULL);
     
     bool created = false;
     std::vector<Triangle*> triangles;
     std::vector<Material*> materials;
     void Translate(glm::vec3 position);
+    void Scale(glm::vec3 factor);
 };
 
 #endif /* MESH_H_ */

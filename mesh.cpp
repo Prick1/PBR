@@ -1,6 +1,6 @@
 #include "mesh.h"
 
-Mesh::Mesh(const std::string &pFile){
+Mesh::Mesh(const std::string &pFile,Material* material){
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(pFile, aiProcess_CalcTangentSpace       |
                                              aiProcess_Triangulate            |
@@ -12,7 +12,7 @@ Mesh::Mesh(const std::string &pFile){
 			aiColor3D emissiveColor = {0.0,0.0,0.0};
 
 		
-			if(scene->mMaterials){
+			if(scene->mMaterials && material == NULL){
 				scene->mMaterials[c]->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor);
 				scene->mMaterials[c]->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor);
 				glm::vec3 emittance(emissiveColor.r, emissiveColor.g, emissiveColor.b);
@@ -28,8 +28,6 @@ Mesh::Mesh(const std::string &pFile){
 			}
 			else
 				materials.push_back(new Diffuse(glm::vec3 (0.7f, 0.5f, 0.3f)));
-			
-            	
 			
 			
 		}
@@ -54,10 +52,11 @@ Mesh::Mesh(const std::string &pFile){
                 	vertices[2].x = mesh1->mVertices[face.mIndices[2]].x; 
                 	vertices[2].y = mesh1->mVertices[face.mIndices[2]].y;
                 	vertices[2].z = mesh1->mVertices[face.mIndices[2]].z;
-
-					triangles.push_back(new Triangle(vertices[0], vertices[1], vertices[2]
-										, materials[mesh1->mMaterialIndex]));
-                	//triangles.push_back(Triangle(vertices[0],vertices[1], vertices[2], m));
+					if(material == NULL)
+						triangles.push_back(new Triangle(vertices[0], vertices[1], vertices[2]
+											, materials[mesh1->mMaterialIndex]));
+					else
+                	    triangles.push_back(new Triangle(vertices[0],vertices[1], vertices[2], material));
             	}
 
         	}
@@ -74,5 +73,13 @@ void Mesh::Translate(glm::vec3 position){
 		triangles[i]->point1_ += position;
 		triangles[i]->point2_ += position;
 		triangles[i]->point3_ += position;
+	}
+}
+
+void Mesh::Scale(glm::vec3 factor){
+	for(unsigned int i = 0; i < triangles.size(); i++){
+		triangles[i]->point1_ *= factor;
+		triangles[i]->point2_ *= factor;
+		triangles[i]->point3_ *= factor;
 	}
 }

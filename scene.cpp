@@ -117,13 +117,11 @@ void Scene::load( void )
 
     Mesh mesh1("CornellBoxWithoutCrates.obj");
     load_mesh(mesh1, glm::vec3 {0.0f});
-    //Mesh mesh2("monkey.obj");
-    //load_mesh(mesh2, glm::vec3 (0.0f, 1.0f, -0.5f));
+    Mesh mesh2("dragon_vrip.ply", new Metal(0.3f, glm::vec3(0.95f, 0.64f, 0.54f)));
+    mesh2.Scale(glm::vec3(10.0f));
+    load_mesh(mesh2, glm::vec3 (0.0f, -0.55f, -0.5f));
     
-    primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.5f, 0.31f, 0.1f }, 0.3f, new Metal(0.1f, glm::vec3(0.95f, 0.64f, 0.54f)) }));
-    primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{ -0.3f, 0.31f, -0.3f}, 0.3f , new Specular() }));
-
-    //bvh = new BVH(primitives_);
-    //bvh->BVHBuild();						       
+    //primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{  0.5f, 0.31f, 0.1f }, 0.3f, new Metal(0.1f, glm::vec3(0.95f, 0.64f, 0.54f)) }));
+    //primitives_.push_back( Primitive::PrimitiveUniquePtr( new Sphere{ glm::vec3{ -0.3f, 0.31f, -0.3f}, 0.3f , new Specular() }));						       
 }
 
