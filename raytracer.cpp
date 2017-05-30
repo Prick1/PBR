@@ -71,7 +71,6 @@ void RayTracer::thread_integrate(const int threadId){
                 }
 
             buffer_.buffer_data_[x][y] /= rays_;
-	        //glm::clamp(buffer_.buffer_data_[x][y], glm::vec3{0.0f, 0.0f, 0.0f}, glm::vec3{1.0f, 1.0f, 1.0f});
             progress[threadId]++;
             }  
         }
